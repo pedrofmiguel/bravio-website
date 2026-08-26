@@ -9,9 +9,9 @@ import ContactSection from "@/components/contact/ContactSection";
  * Home.
  *
  * Section order is a deliberate rhythm of layout families so no two
- * consecutive blocks are composed the same way: asymmetric split, centred
- * statement, captioned menu grid, sticky stack, horizontal pan, then the
- * split form.
+ * consecutive blocks are composed the same way: brand field with type across
+ * it, centred statement, captioned menu grid, sticky stack, horizontal pan,
+ * then the split form.
  */
 export default function HomePage() {
   return (

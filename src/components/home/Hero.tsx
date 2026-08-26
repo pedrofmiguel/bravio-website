@@ -1,23 +1,31 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { useLang } from "@/lib/lang-context";
-import { HERO } from "@/lib/media";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
-import { ArrowLink } from "@/components/ui/ArrowLink";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { Logomark } from "@/components/brand/Marks";
 
 /**
- * Opening moment.
+ * Hero: the mark at full scale, with the line written across it.
  *
- * Asymmetric split rather than a centred hero: the headline holds the left
- * seven columns and the photograph runs off the right edge, which gives the
- * type somewhere to sit without competing with the image.
+ * No buttons, no photograph, no stack of supporting copy. The mark fills the
+ * viewport and bleeds off the top and bottom, and the headline is set straight
+ * over the middle of it.
  *
- * The entry timeline waits for the preloader to finish so the two never play
- * over each other. On a repeat visit within the same tab there is no preloader,
- * so it starts immediately.
+ * A note on what was tried and rejected: setting the type to
+ * `mix-blend-mode: difference` makes it invert as it crosses the mark, which
+ * is a lovely effect and completely wrong here. difference(creme, fig) lands
+ * on mint green, so the one section that is supposed to be strictly fig and
+ * creme was the only one introducing a new hue. Restraint instead: the mark is
+ * a field at partial strength and the type sits on it in full creme.
+ *
+ * The composition is deliberately off centre. A mark centred behind centred
+ * type reads as a blob with a caption; pushed right and cropped by the edge,
+ * with the line set left across its arms, it reads as a composition.
+ *
+ * No buttons. The mark and the sentence are the whole idea, and booking lives
+ * in the nav, the enquiry section and the footer.
  */
 export default function Hero() {
   const { t, lang } = useLang();
@@ -28,9 +36,7 @@ export default function Hero() {
     if (!root) return;
 
     if (prefersReducedMotion()) {
-      root.querySelectorAll("[data-anim]").forEach((el) => {
-        el.classList.add("is-ready");
-      });
+      root.querySelectorAll("[data-anim]").forEach((el) => el.classList.add("is-ready"));
       return;
     }
 
@@ -39,57 +45,48 @@ export default function Hero() {
     const play = () => {
       ctx = gsap.context(() => {
         gsap.set("[data-anim]", { visibility: "visible" });
-
         const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
         tl.fromTo(
-          "[data-hero-line]",
-          { yPercent: 115 },
-          { yPercent: 0, duration: 1.3, stagger: 0.11 }
+          "[data-mark]",
+          { autoAlpha: 0, scale: 1.18, rotate: -24 },
+          { autoAlpha: 1, scale: 1, rotate: 0, duration: 2.1, ease: "power3.out" }
         )
           .fromTo(
-            "[data-hero-image]",
-            { clipPath: "inset(100% 0% 0% 0%)", scale: 1.18 },
-            {
-              clipPath: "inset(0% 0% 0% 0%)",
-              scale: 1,
-              duration: 1.6,
-              ease: "power3.inOut",
-            },
-            0.25
+            "[data-line]",
+            { yPercent: 118 },
+            { yPercent: 0, duration: 1.4, stagger: 0.12 },
+            "-=1.55"
           )
           .fromTo(
-            "[data-hero-fade]",
-            { y: 22, autoAlpha: 0 },
-            { y: 0, autoAlpha: 1, duration: 1, stagger: 0.1 },
-            "-=0.95"
+            "[data-sub]",
+            { autoAlpha: 0, y: 16 },
+            { autoAlpha: 1, y: 0, duration: 1.1 },
+            "-=0.9"
           );
 
-        // Slow drift on the photograph as the section leaves. Motivated: it
-        // separates the image plane from the type plane, so the hero feels
-        // like a composition with depth rather than a flat banner.
-        gsap.to("[data-hero-image] img", {
-          yPercent: 12,
+        // The mark drifts and turns a little as the hero leaves, so the brand
+        // field feels like a plane behind the type rather than a flat backdrop.
+        gsap.to("[data-mark]", {
+          yPercent: 9,
+          rotate: 7,
           ease: "none",
           scrollTrigger: {
             trigger: root,
             start: "top top",
             end: "bottom top",
-            scrub: true,
+            scrub: 1,
           },
         });
       }, root);
     };
 
-    // The preloader only exists on a first visit, so race a short timeout
-    // against its completion event rather than waiting on it unconditionally.
     let settled = false;
     const start = () => {
       if (settled) return;
       settled = true;
       play();
     };
-
     window.addEventListener("bravio:intro-done", start, { once: true });
     const timer = window.setTimeout(start, 120);
 
@@ -103,65 +100,46 @@ export default function Hero() {
   return (
     <section
       ref={rootRef}
-      className="on-fig relative min-h-[100dvh] bg-ground text-ink"
+      className="on-fig relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-ground text-ink [isolation:isolate]"
     >
-      <div className="mx-auto grid min-h-[100dvh] max-w-[1500px] grid-cols-1 items-center gap-10 px-5 pb-16 pt-24 sm:px-8 lg:grid-cols-12 lg:gap-8 lg:px-12 lg:pb-20">
-        <div className="lg:col-span-7 xl:col-span-6">
-          <h1 className="font-display type-hero">
-            <span className="line-mask">
-              <span data-anim data-hero-line className="block">
-                {t.hero.line1}
-              </span>
-            </span>
-            <span className="line-mask">
-              <span data-anim data-hero-line className="block">
-                {t.hero.line2}
-              </span>
-            </span>
-          </h1>
-
-          <p
-            data-anim
-            data-hero-fade
-            className="type-lead mt-8 max-w-[46ch] text-ink-muted"
-          >
-            {t.hero.sub}
-          </p>
-
-          <div
-            data-anim
-            data-hero-fade
-            className="mt-10 flex flex-wrap items-center gap-3"
-          >
-            <ArrowLink href="/contact">{t.cta.book}</ArrowLink>
-            <ArrowLink href="/story" variant="outline">
-              {t.cta.work}
-            </ArrowLink>
-          </div>
-        </div>
-
-        <div className="lg:col-span-5 lg:col-start-8 xl:col-span-6 xl:col-start-7">
-          <div
-            data-anim
-            data-hero-image
-            className="relative aspect-4/5 w-full overflow-hidden sm:aspect-3/2 lg:aspect-auto lg:h-[min(74vh,760px)]"
-          >
-            <Image
-              src={HERO.src}
-              alt={HERO.alt}
-              fill
-              // Largest contentful paint on every page load, so it is fetched
-              // eagerly and sized honestly per breakpoint.
-              priority
-              fetchPriority="high"
-              sizes="(max-width: 1024px) 100vw, 45vw"
-              className="scale-110 object-cover"
-            />
-          </div>
-        </div>
+      {/* The mark: large, pushed right, cropped by the edge. Held at partial
+          strength so the display type stays comfortably above AA on top of it
+          and the nav never has to fight it. */}
+      <div
+        data-anim
+        data-mark
+        aria-hidden="true"
+        // `left` is the mark's left edge, not its centre, so these values are
+        // set so the headline's second line actually crosses its inner arms
+        // while the far side stays cropped by the viewport.
+        className="invisible pointer-events-none absolute top-1/2 left-[26%] -translate-y-1/2 sm:left-[34%] lg:left-[38%]"
+      >
+        <Logomark className="h-[min(92vh,880px)] w-auto text-creme opacity-[0.28]" />
       </div>
 
-      {/* Header watches this to decide when to pick up a background plate. */}
+      <div className="relative mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-12">
+        <h1 className="font-display type-hero max-w-[11ch] text-creme">
+          <span className="line-mask">
+            <span data-anim data-line className="invisible block">
+              {t.hero.line1}
+            </span>
+          </span>
+          <span className="line-mask">
+            <span data-anim data-line className="invisible block">
+              {t.hero.line2}
+            </span>
+          </span>
+        </h1>
+
+        <p
+          data-anim
+          data-sub
+          className="invisible mt-9 max-w-[38ch] text-[0.95rem] leading-relaxed text-creme/55"
+        >
+          {t.hero.sub}
+        </p>
+      </div>
+
       <div id="hero-sentinel" aria-hidden="true" className="absolute bottom-0 h-px w-full" />
     </section>
   );
