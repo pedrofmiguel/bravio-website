@@ -1,0 +1,174 @@
+# bravio
+
+Site for bravio, private chef and catering. Next.js 16 (App Router), Tailwind v4,
+GSAP + Lenis, deployed on Vercel.
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## What is where
+
+```
+src/
+  app/
+    page.tsx              home
+    story/page.tsx        about + the archive gallery
+    contact/page.tsx      enquiry form
+    api/contact/route.ts  form delivery (Gmail SMTP)
+    globals.css           design tokens, section tones, type scale
+  components/
+    brand/Marks.tsx       logomark + wordmark as inline vectors
+    layout/               header, footer, preloader, route transition, scroll
+    home/                 hero, statement, courses, services, sourcing
+    story/Gallery.tsx     the hand-placed archive grid
+    contact/              form + the shared enquiry section
+  lib/
+    i18n.ts               every visible string, EN and PT
+    media.ts              every photograph and clip
+    brand-paths.ts        GENERATED, see "Brand marks" below
+```
+
+Two files carry most of the content: **`lib/i18n.ts`** for words and
+**`lib/media.ts`** for pictures. Neither requires touching a component.
+
+---
+
+## The three things you will most likely want to change
+
+### 1. Real photography
+
+Everything currently points at open-licence Unsplash placeholders, chosen to
+match the low-key register of the brand board. They are stand-ins, not art
+direction.
+
+Drop the real files into `public/media/` and edit `src/lib/media.ts`:
+
+```ts
+const SHOT = {
+  tableCourse: "1414235077428-338989a2e8c0",   // before
+};
+// after: replace the img() call with a direct path
+img("/media/hero-table.jpg", "portrait", "A course set down at the table")
+```
+
+Every layout reads `aspect` from the manifest, so the compositions keep their
+rhythm regardless of what you point them at. Once nothing references Unsplash,
+delete the `remotePatterns` block in `next.config.ts`.
+
+**Video** works in the story gallery already. Add an entry with
+`kind: "video"`, a `src` and a `poster`, and the same frame plays it inline,
+muted and looping, pausing whenever it scrolls off screen. No clips ship today
+because none were supplied.
+
+### 2. Contact details and the inbox
+
+Placeholder address, phone and handle live in `CONTACT_DETAILS` at the bottom
+of `src/lib/i18n.ts`. Delivery is configured with environment variables, see
+`.env.example`. Copy it to `.env.local` for development.
+
+Until `GMAIL_USER` and `GMAIL_APP_PASSWORD` are set, the route returns a 500
+and the form shows its error state, which tells the visitor to email directly.
+That is deliberate: a booking enquiry that silently vanishes is worse than a
+form that visibly fails. Set `CONTACT_DRY_RUN=1` to exercise the form without
+sending anything.
+
+### 3. The display typeface
+
+The brand guidelines specify **Gottora**, which is not a free or Google font
+and was not supplied. **Outfit** stands in for it: the closest geometric sans
+in proportion and weight. The real wordmark is used wherever the logo appears,
+so the brand's own letterforms are still on the page.
+
+To swap Gottora in, put the woff2 in `public/fonts/` and change one block in
+`src/app/layout.tsx` from `next/font/google` to `next/font/local`. Keep the
+`--font-outfit` variable name and nothing else has to move.
+
+---
+
+## Brand marks
+
+The supplied assets were PNG only. `src/lib/brand-paths.ts` is **generated**:
+the PNGs are traced to outlines so the mark stays crisp at page-transition
+scale and can inherit colour, which is what makes the positive and negative
+lockups work from one file.
+
+```bash
+npm run brand     # only needed if the logo artwork itself changes
+```
+
+That runs trace (potrace) then measure (the real bounding box, via a headless
+browser) then emit. The measure step matters: without it the viewBox is the
+source PNG's canvas and the mark only fills about 64% of its box, so every size
+class in the app ends up compensating by guesswork.
+
+---
+
+## Design decisions worth knowing
+
+**Palette is the brand board verbatim.** Smoked Fig grounds the hero, the route
+transition and the footer. Crème Fraîche grounds the body. Braised Cherry is
+the only accent and is used identically everywhere. Aged Pistou carries exactly
+one full-bleed block.
+
+**Dark mode uses the brand's own negative lockup.** Rather than inventing a
+second palette, `prefers-color-scheme: dark` swaps ground and ink, so the site
+becomes the negative version of itself. Section tone classes (`.on-fig`,
+`.on-pistou` in `globals.css`) re-point the same tokens, so a button dropped
+onto a colour block inverts itself without the caller knowing where it is.
+
+**Motion is deliberately slow.** Lenis runs at `lerp: 0.075`, heavier than its
+default. That single number does more for how expensive the site feels than
+any individual animation, so treat it as a design value, not config.
+
+**Every animation degrades.** `prefers-reduced-motion` is honoured throughout,
+and no content is reachable only through motion. Reveals resolve to their
+finished state, the services stack flows as plain cards, and the courses grid
+is fully static to begin with.
+
+**GSAP always sets up in `useLayoutEffect`, never `useEffect`.** This is not
+style. React runs `useEffect` cleanups *after* it removes DOM nodes, so any
+GSAP feature that reparents a React-owned node (ScrollTrigger's `pin: true`
+wraps the target in a pin-spacer) leaves React holding a stale parent and
+crashes the route with "removeChild: The node to be removed is not a child of
+this node". `lib/use-isomorphic-layout-effect.ts` exists for exactly this, and
+`npm run verify:nav` guards against the regression.
+
+**Language is a client preference, not a route.** Both languages live in
+`i18n.ts` and the toggle persists to localStorage. Routes stay `/`, `/story`
+and `/contact` in both. If PT ever needs to rank separately in search, the
+dictionary is already the hard part done: move the routes under `/[lang]/` and
+read the segment instead of the store.
+
+---
+
+## Checks
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+
+npm run verify        # intro gating, reduced motion, language toggle, overflow
+npm run verify:form   # validation, focus management, submit, success state
+npm run verify:nav    # route changes from four scroll depths, no console errors
+```
+
+The `verify` scripts drive a real browser and need the production server
+running (`npm run build && npm run start`). They write screenshots to
+`screenshots/`, which is gitignored.
+
+`potrace`, `sharp` and `playwright` are devDependencies used only by the brand
+pipeline and these checks. Nothing in the shipped bundle depends on them, and
+they can be removed once the real logo vectors exist.
+
+---
+
+## Deploying
+
+Import the repo on Vercel; the framework preset is detected. Add the contact
+variables from `.env.example` to **both** Production and Preview, or previews
+will 500 on submit.

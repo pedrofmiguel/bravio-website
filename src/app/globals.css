@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   bravio design tokens
+   Palette is taken verbatim from the brand guidelines board.
+   The brand ships a positive (ink on creme) and a negative (creme on fig)
+   lockup, so dark mode swaps ground/ink rather than inventing a new palette.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --color-fig: #341114; /* Smoked Fig      */
+  --color-cherry: #72272b; /* Braised Cherry  */
+  --color-creme: #f7f0e4; /* Creme Fraiche   */
+  --color-thyme: #4d5525; /* Dried Thyme     */
+  --color-pistou: #2b371d; /* Aged Pistou     */
+
+  --font-display: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* One easing curve for the whole site keeps the motion feeling authored. */
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+  --ground: var(--color-creme);
+  --ink: var(--color-fig);
+  --accent: var(--color-cherry);
+  /* Hairlines and muted text are derived from ink so they track the theme. */
+  --rule: color-mix(in srgb, var(--ink) 16%, transparent);
+  --ink-muted: color-mix(in srgb, var(--ink) 62%, transparent);
+  /* Solid CTAs carry their own pair so they can never end up low contrast
+     when a section flips ground colour. */
+  --cta-bg: var(--color-cherry);
+  --cta-fg: var(--color-creme);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: var(--color-fig);
+    --ink: var(--color-creme);
+    /* Cherry on fig is too close in value, so the accent lifts toward creme. */
+    --accent: color-mix(in srgb, var(--color-cherry) 55%, var(--color-creme));
+    --rule: color-mix(in srgb, var(--ink) 18%, transparent);
+    --ink-muted: color-mix(in srgb, var(--ink) 58%, transparent);
+    --cta-bg: var(--color-creme);
+    --cta-fg: var(--color-fig);
+  }
+}
+
+/* ---------------------- section tone overrides --------------------------
+   The brand ships positive and negative lockups, so full-bleed colour blocks
+   re-point the same tokens rather than hard coding colours per section. Any
+   component dropped inside one of these adapts without knowing where it is.
+------------------------------------------------------------------------ */
+
+.on-fig {
+  --ground: var(--color-fig);
+  --ink: var(--color-creme);
+  --accent: color-mix(in srgb, var(--color-cherry) 55%, var(--color-creme));
+  --rule: color-mix(in srgb, var(--color-creme) 18%, transparent);
+  --ink-muted: color-mix(in srgb, var(--color-creme) 58%, transparent);
+  --cta-bg: var(--color-creme);
+  --cta-fg: var(--color-fig);
+}
+
+.on-pistou {
+  --ground: var(--color-pistou);
+  --ink: var(--color-creme);
+  --accent: color-mix(in srgb, var(--color-creme) 78%, var(--color-thyme));
+  --rule: color-mix(in srgb, var(--color-creme) 20%, transparent);
+  --ink-muted: color-mix(in srgb, var(--color-creme) 60%, transparent);
+  --cta-bg: var(--color-creme);
+  --cta-fg: var(--color-pistou);
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+  --color-ink-muted: var(--ink-muted);
+  --color-cta: var(--cta-bg);
+  --color-cta-fg: var(--cta-fg);
+}
+
+/* ------------------------------- base ---------------------------------- */
+
+html {
+  /* Lenis drives scrolling; native smooth would fight it. */
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--color-creme);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Lenis needs the document to stay tall while it interpolates. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* --------------------------- type utilities ----------------------------- */
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+/* Display sizes are clamped so the hero never overflows a small laptop. */
+.type-hero {
+  font-size: clamp(2.75rem, 8.2vw, 8.5rem);
+  line-height: 0.9;
+}
+.type-display {
+  font-size: clamp(2.25rem, 5.6vw, 5.25rem);
+  line-height: 0.95;
+}
+.type-title {
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  line-height: 1.02;
+}
+.type-lead {
+  font-size: clamp(1.0625rem, 1.35vw, 1.375rem);
+  line-height: 1.55;
+}
+.type-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ------------------------- reveal primitives ---------------------------- */
+
+/* Masked line reveal. GSAP animates the inner span; the parent clips it. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  /* Reserve room for descenders so 'g' and 'y' are never clipped. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+/* Elements wait for GSAP so there is no flash of finished state. */
+[data-anim] {
+  visibility: hidden;
+}
+.no-js [data-anim],
+[data-anim].is-ready {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    visibility: visible !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Centre readout on the turning table. Remounts on each course, so the
+   animation plays from the start without needing a timeline. */
+@keyframes readout-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.readout-in {
+  animation: readout-in 0.55s var(--ease-brand) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .readout-in {
+    animation: none;
+  }
+}
+
+/* The opening panel ships in the server markup so it covers the hero on the
+   very first paint. The head script hides it when it should not run. */
+[data-intro="skip"] #intro {
+  display: none;
+}
