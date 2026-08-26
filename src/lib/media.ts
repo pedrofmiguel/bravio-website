@@ -96,15 +96,6 @@ export const SERVICE_MEDIA: Media[] = [
   img(SHOT.chefHands, "landscape", "A chef's hands working through prep"),
 ];
 
-/* ---------------------------- sourcing --------------------------------- */
-
-export const SOURCING: Media = img(
-  SHOT.produce,
-  "landscape",
-  "Vegetables, eggs and herbs laid out on a board",
-  1600
-);
-
 /* ------------------------- the story gallery --------------------------- */
 /* Mixed ratios on purpose. Reordering this array recomposes the page.
    Add { kind: "video", src, poster, aspect, alt } entries and the same grid

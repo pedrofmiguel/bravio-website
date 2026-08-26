@@ -80,6 +80,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${outfit.variable} ${dmSans.variable} antialiased`}
+      // INTRO_GATE stamps data-intro on <html> before React hydrates, which is
+      // the whole point of it (it has to beat first paint). React then sees an
+      // attribute the server did not render and warns about a mismatch. This
+      // is the documented escape hatch for exactly that pattern, and it is
+      // shallow: it covers attributes on <html> itself, nothing inside.
+      suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: INTRO_GATE }} />

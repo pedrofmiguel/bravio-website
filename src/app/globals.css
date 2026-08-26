@@ -11,6 +11,9 @@
   --color-fig: #341114; /* Smoked Fig      */
   --color-cherry: #72272b; /* Braised Cherry  */
   --color-creme: #f7f0e4; /* Creme Fraiche   */
+  /* The greens are on the brand board but the site is deliberately
+     monochrome: fig and creme only, with the photography carrying the
+     colour. Kept here so the palette stays documented in one place. */
   --color-thyme: #4d5525; /* Dried Thyme     */
   --color-pistou: #2b371d; /* Aged Pistou     */
 
@@ -65,15 +68,6 @@
   --cta-fg: var(--color-fig);
 }
 
-.on-pistou {
-  --ground: var(--color-pistou);
-  --ink: var(--color-creme);
-  --accent: color-mix(in srgb, var(--color-creme) 78%, var(--color-thyme));
-  --rule: color-mix(in srgb, var(--color-creme) 20%, transparent);
-  --ink-muted: color-mix(in srgb, var(--color-creme) 60%, transparent);
-  --cta-bg: var(--color-creme);
-  --cta-fg: var(--color-pistou);
-}
 
 @theme inline {
   --color-ground: var(--ground);

@@ -31,7 +31,6 @@ export type Dict = {
   statement: { lines: string[] };
   table: { heading: string; body: string; courses: Course[] };
   services: { label: string; items: ServiceItem[] };
-  sourcing: { heading: string; body: string };
   galleryTeaser: { heading: string; body: string };
   contact: {
     label: string;
@@ -159,10 +158,6 @@ const en: Dict = {
     ],
   },
 
-  sourcing: {
-    heading: "We buy small.",
-    body: "Boats out of Sesimbra, growers in the Oeste, a cheese room in Seia. The list of suppliers is short because we only buy what we would put on our own table.",
-  },
 
   galleryTeaser: {
     heading: "Evenings we have cooked",
@@ -313,10 +308,6 @@ const pt: Dict = {
     ],
   },
 
-  sourcing: {
-    heading: "Compramos pouco.",
-    body: "Barcos de Sesimbra, produtores no Oeste, uma queijaria em Seia. A lista de fornecedores é curta porque só compramos o que poríamos na nossa própria mesa.",
-  },
 
   galleryTeaser: {
     heading: "Noites que cozinhámos",

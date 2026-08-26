@@ -23,7 +23,7 @@ src/
   components/
     brand/Marks.tsx       logomark + wordmark as inline vectors
     layout/               header, footer, preloader, route transition, scroll
-    home/                 hero, statement, courses, services, sourcing
+    home/                 hero, statement, courses, services, scroll gallery
     story/Gallery.tsx     the hand-placed archive grid
     contact/              form + the shared enquiry section
   lib/
@@ -109,10 +109,12 @@ class in the app ends up compensating by guesswork.
 
 ## Design decisions worth knowing
 
-**Palette is the brand board verbatim.** Smoked Fig grounds the hero, the route
+**Palette is deliberately monochrome.** Smoked Fig grounds the hero, the route
 transition and the footer. Crème Fraîche grounds the body. Braised Cherry is
-the only accent and is used identically everywhere. Aged Pistou carries exactly
-one full-bleed block.
+the only accent and is used identically everywhere. The greens from the brand
+board (Dried Thyme, Aged Pistou) stay defined in `globals.css` but are unused
+on purpose: the layout is fig and creme, and the photography carries all the
+colour.
 
 **Dark mode uses the brand's own negative lockup.** Rather than inventing a
 second palette, `prefers-color-scheme: dark` swaps ground and ink, so the site
@@ -129,13 +131,20 @@ and no content is reachable only through motion. Reveals resolve to their
 finished state, the services stack flows as plain cards, and the courses grid
 is fully static to begin with.
 
+**The archive pans sideways on scroll.** `ScrollGallery` pins and scrubs a
+horizontal track on desktop with a fine pointer. On touch and under reduced
+motion the identical markup is a native scroll rail with snap points, which
+beats any hijack on a phone. Frames share a height and take their width from
+each photograph's own ratio, so the row is paced by the pictures.
+
 **GSAP always sets up in `useLayoutEffect`, never `useEffect`.** This is not
 style. React runs `useEffect` cleanups *after* it removes DOM nodes, so any
 GSAP feature that reparents a React-owned node (ScrollTrigger's `pin: true`
 wraps the target in a pin-spacer) leaves React holding a stale parent and
 crashes the route with "removeChild: The node to be removed is not a child of
 this node". `lib/use-isomorphic-layout-effect.ts` exists for exactly this, and
-`npm run verify:nav` guards against the regression.
+`npm run verify:nav` guards against the regression. This is what makes the
+pinned horizontal pan safe to ship at all.
 
 **Language is a client preference, not a route.** Both languages live in
 `i18n.ts` and the toggle persists to localStorage. Routes stay `/`, `/story`
