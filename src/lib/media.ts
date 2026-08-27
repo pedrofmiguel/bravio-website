@@ -10,9 +10,6 @@
  * Placeholders are real open-licence photography from Unsplash, picked by eye
  * for the low-key register the brand board implies. Alt text describes what is
  * actually in each frame, so it stays accurate until the real photos land.
- *
- * The course names in the copy are the brand's own. The placeholder dishes
- * only loosely match them, which is expected: the real plates get shot later.
  */
 
 export type MediaKind = "image" | "video";
@@ -59,9 +56,6 @@ const SHOT = {
   moodyDish: "1476224203421-9ac39bcb3327",
   longTable: "1519225421980-715cb0215aed",
   sharingPlatter: "1555939594-58d7cb561ad1",
-  darkPlate: "1543826173-70651703c5a4",
-  cheese: "1486297678162-eb2a19b0a32d",
-  sweet: "1551024506-0bccd828d307",
 } as const;
 
 /* ----------------------------- hero ----------------------------------- */
@@ -72,21 +66,6 @@ export const HERO: Media = img(
   "A plated course set down on a candlelit dining table",
   1800
 );
-
-/* ----------------------------- courses --------------------------------- */
-/* The sample menu, in service order. Index matches t.table.courses, so adding
-   a plate here means adding its name to the dictionary too. */
-
-export const COURSES: Media[] = [
-  img(SHOT.fishPlated, "portrait", "White fish plated with greens and sauce"),
-  img(SHOT.clams, "portrait", "Clams and pasta in a shallow bowl"),
-  img(SHOT.fishDark, "portrait", "Seared fish on a dark plate"),
-  img(SHOT.darkPlate, "portrait", "A composed plate finished with a sauce"),
-  img(SHOT.boardMeat, "portrait", "Roasted meat carved onto a wooden board"),
-  img(SHOT.sharingPlatter, "portrait", "A sharing platter of grilled meat and vegetables"),
-  img(SHOT.cheese, "portrait", "Whole wheels of raw sheep cheese"),
-  img(SHOT.sweet, "portrait", "A plated dessert with caramel"),
-];
 
 /* ---------------------------- services --------------------------------- */
 

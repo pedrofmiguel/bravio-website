@@ -20,6 +20,7 @@ type Payload = {
   message: string;
   phone?: string;
   date?: string;
+  location?: string;
   guests?: string;
   occasion?: string;
   lang?: string;
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
 
   const phone = clean(body.phone, MAX.short);
   const date = clean(body.date, MAX.short);
+  const location = clean(body.location, MAX.short);
   const guests = clean(body.guests, MAX.short);
   const occasion = clean(body.occasion, MAX.short);
 
@@ -100,6 +102,7 @@ export async function POST(request: Request) {
     `Email:    ${email}`,
     phone && `Phone:    ${phone}`,
     date && `Date:     ${date}`,
+    location && `Location: ${location}`,
     guests && `Guests:   ${guests}`,
     occasion && `Occasion: ${occasion}`,
     `Language: ${clean(body.lang, 8) || "en"}`,

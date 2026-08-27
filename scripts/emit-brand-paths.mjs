@@ -11,6 +11,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const bbox = JSON.parse(readFileSync("scripts/bbox.json", "utf8"));
+const lockup = JSON.parse(readFileSync("scripts/lockup.json", "utf8"));
 
 function extract(file, key) {
   const svg = readFileSync(`public/brand/${file}`, "utf8");
@@ -44,7 +45,14 @@ export const LOGOMARK_PATH =
 export const WORDMARK_VIEWBOX = "${word.viewBox}";
 export const WORDMARK_PATH =
   "${word.d}";
+
+/* Measured off the supplied lockup, both against the mark's height, which is
+   the one size a caller picks. Keeps the header and footer from re-deciding
+   the relationship between the two marks by eye. */
+export const LOCKUP_WORD_RATIO = ${lockup.wordRatio.toFixed(4)};
+export const LOCKUP_GAP_RATIO = ${lockup.gapRatio.toFixed(4)};
 `
 );
 console.log("logomark viewBox:", mark.viewBox);
 console.log("wordmark viewBox:", word.viewBox);
+console.log("lockup ratios:", lockup.wordRatio.toFixed(4), lockup.gapRatio.toFixed(4));

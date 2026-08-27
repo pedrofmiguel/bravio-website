@@ -23,7 +23,7 @@ src/
   components/
     brand/Marks.tsx       logomark + wordmark as inline vectors
     layout/               header, footer, preloader, route transition, scroll
-    home/                 hero, statement, courses, services, scroll gallery
+    home/                 hero, statement, services, scroll gallery
     story/Gallery.tsx     the hand-placed archive grid
     contact/              form + the shared enquiry section
   lib/
@@ -105,6 +105,26 @@ browser) then emit. The measure step matters: without it the viewBox is the
 source PNG's canvas and the mark only fills about 64% of its box, so every size
 class in the app ends up compensating by guesswork.
 
+Two things about that pipeline are load-bearing:
+
+**Both marks are cut out of `logo-dark-transparent.png`**, the full lockup,
+rather than the standalone `logomark-*.png` and `name-*.png` files. The lockup
+is by far the highest resolution artwork in the kit - the wordmark is 240px
+tall in it against 78px in `name-*.png` - and tracing the small files meant
+upscaling 5x before potrace ever saw the edges.
+
+**The marks must render with `fill-rule="evenodd"`.** potrace emits one path
+per mark whose holes - the counters of b, a and o, the gaps between the
+anemone's tendrils - are subpaths wound the same way as the outline. Under
+SVG's default `nonzero` they fill in solid, which turns the wordmark into four
+blobs. `Marks.tsx` sets it explicitly, because `emit-brand-paths.mjs` only
+carries the `d` attribute across and the attribute would otherwise be lost.
+
+The emit step also writes `LOCKUP_WORD_RATIO` and `LOCKUP_GAP_RATIO`, measured
+off the lockup, so `<Lockup>` takes one size - the mark's height - and derives
+the wordmark's height and the space between them instead of having each call
+site guess two numbers that have to agree.
+
 ---
 
 ## Design decisions worth knowing
@@ -128,8 +148,7 @@ any individual animation, so treat it as a design value, not config.
 
 **Every animation degrades.** `prefers-reduced-motion` is honoured throughout,
 and no content is reachable only through motion. Reveals resolve to their
-finished state, the services stack flows as plain cards, and the courses grid
-is fully static to begin with.
+finished state and the services stack flows as plain cards.
 
 **The archive pans sideways on scroll.** `ScrollGallery` pins and scrubs a
 horizontal track on desktop with a fine pointer. On touch and under reduced

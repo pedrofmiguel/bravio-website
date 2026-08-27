@@ -69,6 +69,7 @@ export default function ContactForm() {
           message,
           phone: String(data.get("phone") ?? "").trim(),
           date: String(data.get("date") ?? ""),
+          location: String(data.get("location") ?? "").trim(),
           guests: String(data.get("guests") ?? ""),
           occasion: String(data.get("occasion") ?? ""),
           company: String(data.get("company") ?? ""),
@@ -177,6 +178,18 @@ export default function ContactForm() {
           </select>
         </div>
 
+        {/* Full width: a venue name and a town rarely fit a half column, and
+            it is the one answer that most often decides whether we can cook
+            the night at all. */}
+        <Field
+          label={f.location}
+          hint={f.locationHint}
+          name="location"
+          id={fieldId("location")}
+          autoComplete="address-level2"
+          className="sm:col-span-2"
+        />
+
         <div className="flex flex-col gap-2 sm:col-span-2">
           <label htmlFor={fieldId("message")} className="type-label text-ink-muted">
             {f.message}
@@ -224,6 +237,9 @@ function Field({
   error,
   errorId,
   type = "text",
+  /** Goes on the wrapper, not the input: it is how a field claims both grid
+   *  columns, and the input itself is always full width of whatever it sits in. */
+  className,
   ...rest
 }: {
   label: string;
@@ -233,9 +249,11 @@ function Field({
   error?: string;
   errorId?: string;
   type?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "className"> & {
+    className?: string;
+  }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2 ${className ?? ""}`}>
       <label htmlFor={id} className="type-label flex items-baseline gap-2 text-ink-muted">
         {label}
         {hint ? (

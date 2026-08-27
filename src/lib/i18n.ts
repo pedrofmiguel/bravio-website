@@ -13,7 +13,6 @@ export const LANGS = ["en", "pt"] as const;
 export type Lang = (typeof LANGS)[number];
 export const DEFAULT_LANG: Lang = "en";
 
-export type Course = { name: string; note: string };
 export type ServiceItem = { title: string; body: string; meta: string };
 
 export type Dict = {
@@ -29,7 +28,6 @@ export type Dict = {
   cta: { book: string; work: string };
   hero: { line1: string; line2: string; sub: string };
   statement: { lines: string[] };
-  table: { heading: string; body: string; courses: Course[] };
   services: { label: string; items: ServiceItem[] };
   galleryTeaser: { heading: string; body: string };
   contact: {
@@ -42,6 +40,8 @@ export type Dict = {
       phone: string;
       phoneOptional: string;
       date: string;
+      location: string;
+      locationHint: string;
       guests: string;
       occasion: string;
       occasions: string[];
@@ -122,20 +122,6 @@ const en: Dict = {
     ],
   },
 
-  table: {
-    heading: "What reaches the table",
-    body: "No fixed menu. This is one evening, written for one table and cooked once. Yours will read differently.",
-    courses: [
-      { name: "Robalo curado", note: "Cured sea bass, citrus, green oil" },
-      { name: "Ameijoas", note: "Clams, hand cut pasta, new garlic" },
-      { name: "Carabineiro", note: "Scarlet prawn, burnt tomato, bisque" },
-      { name: "Polvo lagareiro", note: "Octopus, crushed potato, garlic" },
-      { name: "Borrego", note: "Lamb, river mint, young onion" },
-      { name: "Costela assada", note: "Slow roast beef rib, charred onion" },
-      { name: "Queijo da Serra", note: "Raw sheep cheese, quince, walnut" },
-      { name: "Figo assado", note: "Roast fig, olive oil, sheep curd" },
-    ],
-  },
 
   services: {
     label: "What we do",
@@ -174,6 +160,8 @@ const en: Dict = {
       phone: "Phone",
       phoneOptional: "optional",
       date: "Date of the event",
+      location: "Location",
+      locationHint: "town or venue",
       guests: "Guests",
       occasion: "Occasion",
       occasions: [
@@ -272,20 +260,6 @@ const pt: Dict = {
     ],
   },
 
-  table: {
-    heading: "O que chega à mesa",
-    body: "Sem menu fixo. Isto foi uma noite, escrita para uma mesa e cozinhada uma só vez. A sua será outra.",
-    courses: [
-      { name: "Robalo curado", note: "Robalo curado, citrinos, azeite verde" },
-      { name: "Ameijoas", note: "Ameijoas, massa fresca, alho novo" },
-      { name: "Carabineiro", note: "Carabineiro, tomate queimado, bisque" },
-      { name: "Polvo lagareiro", note: "Polvo, batata a murro, alho" },
-      { name: "Borrego", note: "Borrego, hortelã da ribeira, cebola nova" },
-      { name: "Costela assada", note: "Costela de vaca assada, cebola queimada" },
-      { name: "Queijo da Serra", note: "Queijo de ovelha cru, marmelo, noz" },
-      { name: "Figo assado", note: "Figo assado, azeite, requeijão de ovelha" },
-    ],
-  },
 
   services: {
     label: "O que fazemos",
@@ -324,6 +298,8 @@ const pt: Dict = {
       phone: "Telemóvel",
       phoneOptional: "opcional",
       date: "Data do evento",
+      location: "Local",
+      locationHint: "localidade ou espaço",
       guests: "Pessoas",
       occasion: "Ocasião",
       occasions: [

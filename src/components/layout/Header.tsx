@@ -138,7 +138,7 @@ export default function Header() {
             aria-label={t.a11y.home}
             className="shrink-0 transition-opacity hover:opacity-70"
           >
-            <Lockup markClassName="h-[26px] w-auto" wordClassName="h-[15px] w-auto" />
+            <Lockup size={26} />
           </TransitionLink>
 
           <nav className="hidden items-center gap-9 md:flex">

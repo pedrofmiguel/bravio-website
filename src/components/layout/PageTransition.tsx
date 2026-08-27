@@ -10,17 +10,22 @@ import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 /**
  * Branded route transition.
  *
- * Six fig coloured columns sweep up over the outgoing page, the logomark turns
- * into place at the centre, the route swaps behind the cover, then the columns
- * carry on upward to reveal the new page.
+ * A single fig veil dissolves over the outgoing page while the logomark settles
+ * into the centre, the route swaps behind it, then the veil dissolves away.
  *
- * Why it is worth the machinery: the transition is the one moment where the
- * mark is shown at full scale, so it doubles as the brand signature. It also
- * hides the layout shift of a fresh route mounting, which is why the router
- * push waits for the cover to finish rather than racing it.
+ * This replaced a sweep of six columns that rose up the screen. The columns
+ * were legible as separate rectangles - staggered, with visible edges between
+ * them - and read as machinery rather than as the page changing. One veil
+ * moving on opacity has no edges to notice, so the eye stays on the mark.
+ *
+ * Why the transition exists at all: it is the one moment the mark is shown at
+ * full scale, so it doubles as the brand signature, and it covers the layout
+ * shift of a fresh route mounting. That is why the router push waits for the
+ * veil to reach full opacity rather than racing it.
  */
 
-const COLUMNS = 6;
+/** Long and symmetric. Nothing in the transition should arrive sharply. */
+const EASE = "power2.inOut";
 
 type TransitionValue = { navigate: (href: string) => void; isBusy: boolean };
 
@@ -41,7 +46,7 @@ export default function PageTransition({
   const pathname = usePathname();
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const columnsRef = useRef<HTMLDivElement>(null);
+  const veilRef = useRef<HTMLDivElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
 
   // A navigation is in flight. Guards against double clicks mid-timeline.
@@ -50,14 +55,6 @@ export default function PageTransition({
   // a reveal (the preloader owns the opening moment instead).
   const pendingRef = useRef(false);
   const [isBusy, setIsBusy] = useState(false);
-
-  // Park the columns below the fold up front. Setting this from GSAP rather
-  // than a Tailwind class means GSAP owns the transform from the first frame
-  // and never has to parse a matrix it did not write.
-  useIsomorphicLayoutEffect(() => {
-    const columns = columnsRef.current?.children;
-    if (columns) gsap.set(columns, { yPercent: 100 });
-  }, []);
 
   const navigate = useCallback(
     (href: string) => {
@@ -73,8 +70,7 @@ export default function PageTransition({
       pendingRef.current = true;
       setIsBusy(true);
 
-      const columns = columnsRef.current?.children;
-      if (!rootRef.current || !columns) {
+      if (!rootRef.current || !veilRef.current) {
         router.push(href);
         return;
       }
@@ -83,44 +79,43 @@ export default function PageTransition({
       rootRef.current.style.pointerEvents = "auto";
 
       gsap
-        .timeline({ defaults: { ease: "power4.inOut" } })
+        .timeline()
         .set(rootRef.current, { autoAlpha: 1 })
-        // Columns start parked below the fold and rise to fill the screen.
-        .to(columns, {
-          yPercent: 0,
-          duration: 0.75,
-          stagger: { each: 0.055, from: "start" },
-        })
+        // The veil comes up on opacity alone. A faint scale on the way in
+        // gives it somewhere to settle, so it reads as a plane arriving
+        // rather than the screen dimming.
+        .fromTo(
+          veilRef.current,
+          { autoAlpha: 0, scale: 1.04 },
+          { autoAlpha: 1, scale: 1, duration: 0.62, ease: EASE }
+        )
         .fromTo(
           markRef.current,
-          { autoAlpha: 0, scale: 0.55, rotate: -75 },
-          { autoAlpha: 1, scale: 1, rotate: 0, duration: 0.7, ease: "power3.out" },
-          "-=0.45"
+          { autoAlpha: 0, scale: 0.94 },
+          { autoAlpha: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+          "-=0.34"
         )
         .call(() => router.push(href));
     },
     [pathname, router]
   );
 
-  // Runs once the new route has mounted. Plays the second half of the sweep.
+  // Runs once the new route has mounted. Plays the second half of the veil.
   useIsomorphicLayoutEffect(() => {
     if (!pendingRef.current) return;
     pendingRef.current = false;
 
-    const columns = columnsRef.current?.children;
-    if (!rootRef.current || !columns) return;
+    if (!rootRef.current || !veilRef.current) return;
 
     resetScroll();
 
     const tl = gsap.timeline({
-      defaults: { ease: "power4.inOut" },
       onComplete: () => {
         if (rootRef.current) {
           rootRef.current.style.pointerEvents = "none";
           gsap.set(rootRef.current, { autoAlpha: 0 });
         }
-        // Columns wait below the fold, ready for the next navigation.
-        gsap.set(columns, { yPercent: 100 });
+        gsap.set([veilRef.current, markRef.current], { clearProps: "all" });
         busyRef.current = false;
         setIsBusy(false);
         startScroll();
@@ -129,24 +124,19 @@ export default function PageTransition({
       },
     });
 
+    // The mark keeps drifting toward the viewer as it leaves, so the exit
+    // continues the entrance instead of reversing it.
     tl.to(markRef.current, {
       autoAlpha: 0,
-      scale: 1.25,
-      duration: 0.45,
+      scale: 1.06,
+      duration: 0.42,
       ease: "power2.in",
     })
-      // They carry on in the same direction rather than retreating, so the
-      // sweep reads as one continuous movement across the route change.
       .to(
-        columns,
-        {
-          yPercent: -100,
-          duration: 0.8,
-          stagger: { each: 0.055, from: "start" },
-        },
-        "-=0.2"
-      )
-      .set(markRef.current, { clearProps: "all" });
+        veilRef.current,
+        { autoAlpha: 0, scale: 1.03, duration: 0.72, ease: EASE },
+        "-=0.26"
+      );
 
     return () => {
       tl.kill();
@@ -162,16 +152,9 @@ export default function PageTransition({
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-[90] invisible opacity-0"
       >
-        <div ref={columnsRef} className="absolute inset-0 flex">
-          {Array.from({ length: COLUMNS }).map((_, i) => (
-            <div
-              key={i}
-              className="h-full flex-1 bg-fig"
-              // A hair of overlap stops sub-pixel seams showing between columns.
-              style={{ marginRight: i === COLUMNS - 1 ? 0 : "-1px" }}
-            />
-          ))}
-        </div>
+        {/* bg-fig rather than a themed token: the veil has to be the same
+            colour in light and dark. */}
+        <div ref={veilRef} className="absolute inset-0 bg-fig" />
 
         <div className="absolute inset-0 grid place-items-center">
           <div ref={markRef} className="invisible opacity-0">
