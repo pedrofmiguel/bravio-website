@@ -18,7 +18,7 @@ src/
     page.tsx              home
     story/page.tsx        about + the archive gallery
     contact/page.tsx      enquiry form
-    api/contact/route.ts  form delivery (Gmail SMTP)
+    api/contact/route.ts  form delivery (Gmail SMTP) + spam checks
     robots.ts             GENERATED robots.txt
     sitemap.ts            GENERATED sitemap.xml
     opengraph-image.tsx   GENERATED 1200x630 share card
@@ -29,6 +29,7 @@ src/
     home/                 hero, statement, services, scroll gallery
     story/Gallery.tsx     the hand-placed archive grid
     contact/              form + the shared enquiry section
+  instrumentation-client.ts  BotID challenge, lists protected routes
   lib/
     i18n.ts               every visible string, EN and PT
     media.ts              every photograph and clip
@@ -128,6 +129,58 @@ The emit step also writes `LOCKUP_WORD_RATIO` and `LOCKUP_GAP_RATIO`, measured
 off the lockup, so `<Lockup>` takes one size - the mark's height - and derives
 the wordmark's height and the space between them instead of having each call
 site guess two numbers that have to agree.
+
+---
+
+## Spam and bot protection
+
+The enquiry route runs four checks, cheapest first. None is sufficient alone.
+
+| # | Check | Stops |
+| - | ----- | ----- |
+| 1 | Origin | Anything not posted from this site's own pages |
+| 2 | Rate limit | Bursts from one address |
+| 3 | **BotID** | Scripts posting straight at the endpoint |
+| 4 | Honeypot | Naive form fillers |
+
+[Vercel BotID](https://vercel.com/docs/botid) is the one that does the real
+work. It is an invisible challenge - no widget, nothing for a visitor to
+solve - configured in two places that **have to stay in agreement**:
+`src/instrumentation-client.ts` lists the protected paths, and the route calls
+`checkBotId()`. A route checked on the server but missing from that list fails
+every request, including real people. Basic detection is free on all plans;
+Deep Analysis is a Pro dashboard toggle, billed per call, and unnecessary here.
+
+Three things are deliberate:
+
+**The bot check fails open.** `checkBotId()` *throws* when it cannot reach
+Vercel - outside a deployment, or during an outage - and an unhandled throw
+would 500 the form and lose the enquiry. A lost booking costs the client real
+money; a spam message costs them a click. An endpoint holding money or
+credentials should make the opposite call.
+
+**The origin check compares against the request's own host**, not a list of
+known domains, so it holds on the apex, on www, on every preview deployment
+and on localhost with nothing to keep in sync. A missing `Origin` is allowed
+through - some privacy tooling strips it, and rejecting those would turn a
+spam control into a silently broken form.
+
+**The rate limiter evicts, it does not clear.** An earlier version wiped the
+whole map past a size threshold, which handed an attacker a reset: flood it
+with distinct keys and everyone's window went back to zero. It also keys off
+`x-real-ip` rather than the leftmost `x-forwarded-for`, which is the end a
+client can write.
+
+It is still per-instance, so it only slows one warm lambda. For a shared
+counter, add a WAF rate-limit rule on `/api/contact` - it runs at the edge,
+before the function is invoked, and Vercel does not bill blocked traffic.
+
+**Worth enabling in the dashboard:** Firewall → Rules → the Bot Protection
+managed ruleset, which challenges non-browser traffic site-wide and is free.
+
+**Testing note:** BotID blocks direct requests in production by design, so
+exercise the form through a browser, not curl. Local development always
+returns `isBot: false`.
 
 ---
 

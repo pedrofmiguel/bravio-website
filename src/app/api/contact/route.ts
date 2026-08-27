@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkBotId } from "botid/server";
 import nodemailer from "nodemailer";
 
 /**
@@ -10,6 +11,20 @@ import nodemailer from "nodemailer";
  * If the mail transport is not configured this route fails loudly with a 500
  * rather than pretending to succeed. A booking enquiry that silently vanishes
  * is worse than a form that visibly errors and tells the visitor to email.
+ *
+ * SPAM DEFENCE, cheapest check first
+ * ----------------------------------
+ *   1. Origin      - rejects anything not posted from this site's own pages.
+ *   2. Rate limit  - a per instance speed bump, see the note on `hits`.
+ *   3. BotID       - the actual gate. An invisible challenge runs in the
+ *                    browser (see src/instrumentation-client.ts) and this
+ *                    verifies the response server side.
+ *   4. Honeypot    - catches naive form fillers that got past the rest.
+ *
+ * The ordering matters: 1 and 2 are free and need no body, so they run before
+ * the network call in 3. None of these is sufficient alone. The honeypot only
+ * defends the browser path, and the rate limit only slows one warm instance -
+ * BotID is what stops a script posting straight at the endpoint.
  */
 
 export const runtime = "nodejs";
@@ -33,21 +48,87 @@ const MAX = { name: 120, email: 160, message: 4000, short: 120 };
 
 /**
  * Very small in-process throttle. Serverless instances are not shared, so this
- * only slows a burst from one warm instance. It is a speed bump, not a wall:
- * put real rate limiting in front of the route if abuse becomes a problem.
+ * only slows a burst from one warm instance: under load Vercel runs several,
+ * each with its own copy of `hits`, so the real ceiling is `max` times the
+ * number of warm instances. It is a speed bump, not a wall. BotID is the wall.
+ *
+ * For a shared counter, either put a WAF rate limit rule on this path (it runs
+ * at the edge, before the function is even invoked) or move `hits` to Redis.
  */
-const RATE_LIMIT = { windowMs: 60_000, max: 5 };
+const RATE_LIMIT = { windowMs: 60_000, max: 5, maxKeys: 5_000 };
 const hits = new Map<string, number[]>();
+
+/** Drops keys whose whole window has expired. */
+function evictExpired(now: number): void {
+  for (const [key, times] of hits) {
+    if (times[times.length - 1] < now - RATE_LIMIT.windowMs) hits.delete(key);
+  }
+}
 
 function isThrottled(key: string): boolean {
   const now = Date.now();
   const recent = (hits.get(key) ?? []).filter(
     (time) => now - time < RATE_LIMIT.windowMs
   );
-  recent.push(now);
+  // Capped so a client hammering the endpoint cannot grow its own array without
+  // bound. Anything past the limit is refused anyway, so the extra timestamps
+  // carry no information.
+  if (recent.length <= RATE_LIMIT.max + 1) recent.push(now);
   hits.set(key, recent);
-  if (hits.size > 500) hits.clear();
+
+  // Evict rather than clear. The previous version wiped the whole map once it
+  // passed a size threshold, which handed an attacker a way to reset their own
+  // counter: flood it with enough distinct keys and everyone's window, theirs
+  // included, went back to zero.
+  if (hits.size > RATE_LIMIT.maxKeys) evictExpired(now);
+
   return recent.length > RATE_LIMIT.max;
+}
+
+/**
+ * The client's address, preferring the header the platform sets itself.
+ *
+ * x-forwarded-for is a chain and its leftmost entry is the end a client can
+ * write, so keying a limiter off it lets one caller look like thousands by
+ * rotating the header. x-real-ip is set by the proxy and is not client
+ * writable; the forwarded chain is only a fallback for running behind
+ * something that does not set it.
+ */
+function clientIp(request: Request): string {
+  const real = request.headers.get("x-real-ip")?.trim();
+  if (real) return real;
+  const chain = request.headers.get("x-forwarded-for");
+  return chain?.split(",").pop()?.trim() || "unknown";
+}
+
+/**
+ * True when the request was posted from one of this site's own pages.
+ *
+ * The Origin is compared against the host the request actually arrived on,
+ * rather than a list of known domains. That is what makes it self
+ * configuring: it holds on bravio.pt, on www, on every preview deployment and
+ * on localhost, with nothing to keep in sync. A hardcoded list is one domain
+ * change away from rejecting every real enquiry.
+ *
+ * Browsers always send Origin on a cross-origin POST, so a mismatch is a
+ * reliable reject. A *missing* Origin is not treated as hostile: some privacy
+ * tooling strips it, and refusing those would turn a spam control into a
+ * silently broken form for real people. BotID covers that case.
+ */
+function isAllowedOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+
+  const host =
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (!host) return true;
+
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    // An Origin that is not a URL was not written by a browser.
+    return false;
+  }
 }
 
 function clean(value: unknown, limit: number): string {
@@ -55,14 +136,37 @@ function clean(value: unknown, limit: number): string {
 }
 
 export async function POST(request: Request) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  // 1. Posted from somewhere that is not this site.
+  if (!isAllowedOrigin(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-  if (isThrottled(ip)) {
+  // 2. Too many from one address.
+  if (isThrottled(clientIp(request))) {
     return NextResponse.json(
       { error: "Too many requests" },
       { status: 429, headers: { "Retry-After": "60" } }
     );
+  }
+
+  // 3. The real gate. Returns isBot: false in local development regardless,
+  // so the form stays workable without a deployment.
+  //
+  // This FAILS OPEN on purpose. checkBotId() throws when it cannot reach
+  // Vercel to validate - outside a Vercel deployment, or during an outage -
+  // and an unhandled throw here would 500 the form and lose the enquiry. For a
+  // booking form that trade is the wrong way round: a lost booking costs the
+  // client real money, a spam message costs them a click. The origin check,
+  // the throttle and the honeypot all still apply. An endpoint holding money
+  // or credentials should make the opposite choice and fail closed.
+  let isBot = false;
+  try {
+    ({ isBot } = await checkBotId());
+  } catch (error) {
+    console.error("[contact] bot check unavailable, letting it through", error);
+  }
+  if (isBot) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   let body: Payload;
@@ -72,7 +176,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // Honeypot: answer 200 so the bot believes it succeeded and moves on.
+  // 4. Honeypot: answer 200 so the bot believes it succeeded and moves on.
   if (clean(body.company, MAX.short)) {
     return NextResponse.json({ ok: true });
   }
