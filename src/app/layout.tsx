@@ -3,6 +3,14 @@ import { DM_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 
 import { LangProvider } from "@/lib/lang-context";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+  businessJsonLd,
+  websiteJsonLd,
+} from "@/lib/site";
 import PageTransition from "@/components/layout/PageTransition";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import Preloader from "@/components/layout/Preloader";
@@ -34,24 +42,52 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bravio.pt"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "bravio | Private chef and catering",
-    template: "%s | bravio",
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  // Every route sets its own canonical. This is the home page's, and the
+  // fallback for anything that forgets.
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      // Without these Google caps the preview at a thumbnail and a short
+      // snippet, which throws away the photography the site is built on.
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "bravio | Private chef and catering",
-    description:
-      "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
     type: "website",
     locale: "en_GB",
     alternateLocale: "pt_PT",
-    siteName: "bravio",
+    siteName: SITE_NAME,
   },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  // The phone number in the footer is a real link already; this stops iOS
+  // from finding numbers in body copy and turning them blue on its own.
+  formatDetection: { telephone: false, address: false, email: false },
   icons: {
     icon: "/brand/logomark.svg",
+    apple: "/brand/logomark.svg",
   },
 };
 
@@ -89,6 +125,16 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: INTRO_GATE }} />
+        {/* Structured data. Sits in the markup rather than in a Metadata field
+            because Next has no metadata key for JSON-LD, and this is the shape
+            Google documents. The content is generated from lib/site.ts, so it
+            cannot drift from what the footer actually shows. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([businessJsonLd(), websiteJsonLd()]),
+          }}
+        />
       </head>
       <body>
         <LangProvider>

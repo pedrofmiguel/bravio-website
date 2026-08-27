@@ -19,6 +19,9 @@ src/
     story/page.tsx        about + the archive gallery
     contact/page.tsx      enquiry form
     api/contact/route.ts  form delivery (Gmail SMTP)
+    robots.ts             GENERATED robots.txt
+    sitemap.ts            GENERATED sitemap.xml
+    opengraph-image.tsx   GENERATED 1200x630 share card
     globals.css           design tokens, section tones, type scale
   components/
     brand/Marks.tsx       logomark + wordmark as inline vectors
@@ -29,6 +32,7 @@ src/
   lib/
     i18n.ts               every visible string, EN and PT
     media.ts              every photograph and clip
+    site.ts               canonical URL, route list, structured data
     brand-paths.ts        GENERATED, see "Brand marks" below
 ```
 
@@ -124,6 +128,45 @@ The emit step also writes `LOCKUP_WORD_RATIO` and `LOCKUP_GAP_RATIO`, measured
 off the lockup, so `<Lockup>` takes one size - the mark's height - and derives
 the wordmark's height and the space between them instead of having each call
 site guess two numbers that have to agree.
+
+---
+
+## SEO
+
+`lib/site.ts` holds the canonical origin, the shared description and the route
+list. `robots.ts`, `sitemap.ts`, the root metadata and the structured data all
+read from it, so the domain is written once. `NEXT_PUBLIC_SITE_URL` overrides
+it for a staging domain that should describe itself honestly.
+
+| Route             | What it is                                    |
+| ----------------- | --------------------------------------------- |
+| `/robots.txt`     | generated; disallows `/api/`, names the sitemap |
+| `/sitemap.xml`    | the three real routes                          |
+| `/opengraph-image`| 1200x630 share card, drawn from the brand vectors |
+
+Three things are worth knowing before editing any of it:
+
+**Page metadata goes through `pageMetadata()`.** Next merges metadata between
+segments *shallowly*: a page that sets its own `openGraph` replaces the
+layout's entirely, share image and all. A page that set only a title and
+description this way shipped with no card. The helper builds the whole nested
+object so a page cannot drop one by accident.
+
+**The share card renders no text.** It is the negative lockup on a fig field,
+which is the brand's own composition and, usefully, means Satori needs no font
+loaded and the image cannot fail to build on a machine without network.
+
+**Structured data omits placeholder contact details.** `businessJsonLd()` runs
+contact fields through `isPlaceholder()` first. A stand-in phone number is
+harmless in the footer of an unlaunched site and actively bad in schema.org
+markup, where Google may print it in a knowledge panel beside a call button.
+Replace the number in `CONTACT_DETAILS` and it starts publishing itself.
+
+**Known limit: both languages share one URL.** The EN/PT preference is client
+side, so there is one indexable copy of each page and search engines will only
+ever rank the English one. Fixing that properly means moving the routes to
+`/[lang]/...` and reading the segment - `i18n.ts` is already the hard part of
+that job, and `sitemap.ts` would grow `alternates.languages` entries.
 
 ---
 
