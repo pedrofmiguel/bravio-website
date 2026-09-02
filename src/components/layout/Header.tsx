@@ -8,6 +8,7 @@ import TransitionLink from "./TransitionLink";
 import { useLang } from "@/lib/lang-context";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { startScroll, stopScroll } from "@/lib/lenis-store";
+import { DARK_ROUTES } from "@/lib/site";
 
 /**
  * Fixed header.
@@ -121,7 +122,11 @@ export default function Header() {
 
   useEffect(() => () => startScroll(), []);
 
-  const tone = onHero || menuOpen ? "text-creme" : "text-ink";
+  // A route that is fig all the way down never earns the creme plate: past
+  // its hero there is still nothing but fig behind the header.
+  const onDark = DARK_ROUTES.has(pathname);
+  const creme = onHero || menuOpen || onDark;
+  const tone = creme ? "text-creme" : "text-ink";
 
   return (
     <>
@@ -129,7 +134,11 @@ export default function Header() {
         className={`fixed inset-x-0 top-0 z-[80] h-16 transition-colors duration-500 sm:h-[72px] ${tone} ${
           onHero || menuOpen
             ? "bg-transparent"
-            : "bg-ground/80 backdrop-blur-md"
+            : onDark
+              // Same plate, in the ground the page actually has, so the type
+              // still separates from whatever scrolls under it.
+              ? "bg-fig/80 backdrop-blur-md"
+              : "bg-ground/80 backdrop-blur-md"
         }`}
       >
         <div className="mx-auto flex h-full max-w-[1500px] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">

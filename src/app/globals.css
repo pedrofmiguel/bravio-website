@@ -38,19 +38,14 @@
   --cta-fg: var(--color-creme);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --ground: var(--color-fig);
-    --ink: var(--color-creme);
-    /* Cherry on fig is too close in value, so the accent lifts toward creme. */
-    --accent: color-mix(in srgb, var(--color-cherry) 55%, var(--color-creme));
-    --rule: color-mix(in srgb, var(--ink) 18%, transparent);
-    --ink-muted: color-mix(in srgb, var(--ink) 58%, transparent);
-    --cta-bg: var(--color-creme);
-    --cta-fg: var(--color-fig);
-  }
-}
+/* There is deliberately no prefers-color-scheme swap.
+   There was one, and it inverted --ground to fig for anyone whose device was
+   in dark mode. It read as a bug rather than a theme: this site is creme with
+   fig blocks cut into it - the hero, the service panels, the page heroes, the
+   footer - and once the page around them is already fig those blocks stop
+   being contrast and the whole thing goes flat red. The brand ships a positive
+   and a negative lockup, not a light and a dark website, so the ground is
+   pinned and the contrast is composed per section with .on-fig below. */
 
 /* ---------------------- section tone overrides --------------------------
    The brand ships positive and negative lockups, so full-bleed colour blocks

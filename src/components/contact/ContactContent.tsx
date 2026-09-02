@@ -12,6 +12,13 @@ const ENQUIRY_ID = "enquiry";
 /**
  * Contact page. The enquiry block is the same component the home page uses,
  * with its own label suppressed because the page heading already covers it.
+ *
+ * This is the one route that stays fig from the hero to the footer. Everywhere
+ * else fig is a block cut into a creme page; here it is the page, because
+ * there is nothing to look at but a form and the dark ground gives the type
+ * and the hairline fields something to sit on. `.on-fig` re-points the tone
+ * tokens, so the form inherits creme type, creme rules and a creme button
+ * without a single component knowing it moved.
  */
 export default function ContactContent() {
   const { t } = useLang();
@@ -62,7 +69,12 @@ export default function ContactContent() {
         line1={t.contactPage.heroLine1}
         line2={t.contactPage.heroLine2}
       />
-      <ContactSection id={ENQUIRY_ID} showLabel={false} />
+      {/* color-scheme:dark is not decoration. The date field's calendar icon
+          and picker are drawn by the browser, not by us, and on a light scheme
+          they come out near black on fig - invisible. */}
+      <div className="on-fig bg-ground text-ink [color-scheme:dark]">
+        <ContactSection id={ENQUIRY_ID} showLabel={false} />
+      </div>
     </>
   );
 }

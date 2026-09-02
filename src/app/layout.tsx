@@ -104,7 +104,12 @@ const INTRO_GATE = `(function(){try{
 
 export const viewport: Viewport = {
   themeColor: "#341114",
-  colorScheme: "light dark",
+  // "light", not "light dark": the palette no longer follows the OS, so
+  // advertising dark support would only tell the browser to draw form
+  // controls and scrollbars for a theme the page never renders. Sections that
+  // are fig re-declare the scheme themselves, so their native controls still
+  // come out dark.
+  colorScheme: "light",
 };
 
 export default function RootLayout({

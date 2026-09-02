@@ -53,6 +53,18 @@ export const ROUTES = [
   { path: "/contact", changeFrequency: "yearly", priority: 0.7 },
 ] as const;
 
+/**
+ * Routes that are fig from the top of the page to the bottom of the footer.
+ *
+ * Every other route opens on a fig hero and then runs creme, which is what the
+ * header's sentinel watches for: it starts creme on transparent and picks up a
+ * creme plate once the hero has passed. On a route that never leaves fig that
+ * plate would be a beige bar floating on a dark page, so the header stays in
+ * its hero tone for the whole scroll instead. Kept beside ROUTES because it is
+ * a fact about the route, not about the header.
+ */
+export const DARK_ROUTES: ReadonlySet<string> = new Set(["/contact"]);
+
 export const absolute = (path: string) => `${SITE_URL}${path === "/" ? "" : path}`;
 
 /**
