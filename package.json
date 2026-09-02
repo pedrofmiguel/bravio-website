@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "brand": "node scripts/trace-logo.mjs && node scripts/measure-bbox.mjs && node scripts/emit-brand-paths.mjs",
+    "media": "node scripts/optimise-media.mjs",
     "verify": "node scripts/verify.mjs",
     "verify:form": "node scripts/test-form.mjs",
     "verify:nav": "node scripts/verify-nav.mjs"

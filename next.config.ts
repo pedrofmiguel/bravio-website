@@ -3,11 +3,9 @@ import { withBotId } from "botid/next/config";
 
 const nextConfig: NextConfig = {
   images: {
-    // Placeholder photography lives on Unsplash. When the real shoot is dropped
-    // into /public/media this block can go away entirely.
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
-    ],
+    // Every photograph is served from /public/media now, so there is no remote
+    // pattern to allow. Leaving one open would let any URL under that host be
+    // proxied through this site's optimiser.
     formats: ["image/avif", "image/webp"],
   },
 };

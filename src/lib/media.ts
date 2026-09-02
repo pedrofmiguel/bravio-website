@@ -1,15 +1,21 @@
 /**
  * Single source of truth for every photograph and clip on the site.
  *
- * SWAPPING IN THE REAL SHOOT
- * --------------------------
- * Drop the files into /public/media and change `src` to "/media/your-file.jpg".
- * Nothing else needs to move: every layout reads `aspect` from here, so the
- * compositions keep their rhythm regardless of the file behind them.
+ * These are the real photographs now, not placeholders. The originals are
+ * camera files kept outside the repository; what is in /public/media was made
+ * from them by `node scripts/optimise-media.mjs "<originals dir>"`, which also
+ * holds the mapping from camera filename to published name. Adding a frame
+ * means adding it there, running the script, and adding an entry here.
  *
- * Placeholders are real open-licence photography from Unsplash, picked by eye
- * for the low-key register the brand board implies. Alt text describes what is
- * actually in each frame, so it stays accurate until the real photos land.
+ * The shoot is entirely portrait - it was taken on a phone, at work, which is
+ * honest about how this kitchen actually documents itself. `aspect` is
+ * therefore a statement about the FRAME, not about the file: every layout
+ * draws its box from this value and lets the photograph cover-crop into it.
+ * That is why the value is chosen per picture rather than measured. A dish
+ * shot square on survives being cut to a wide band; a hand holding a platter
+ * against a garden does not, and is given an upright frame instead.
+ *
+ * Alt text describes what is actually in each frame.
  */
 
 export type MediaKind = "image" | "video";
@@ -19,7 +25,7 @@ export type Media = {
   /** Poster frame. Required for video, ignored for images. */
   poster?: string;
   kind: MediaKind;
-  /** Intrinsic ratio, used to reserve space and keep CLS at zero. */
+  /** The frame this photograph is drawn in. Not the file's own ratio. */
   aspect: "portrait" | "landscape" | "square" | "tall";
   alt: string;
 };
@@ -31,73 +37,154 @@ export const ASPECT_RATIO: Record<Media["aspect"], number> = {
   tall: 2 / 3,
 };
 
-const unsplash = (id: string, w = 1600) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=72`;
-
-const img = (
-  id: string,
-  aspect: Media["aspect"],
-  alt: string,
-  w?: number
-): Media => ({ src: unsplash(id, w), kind: "image", aspect, alt });
-
-/* Named so a frame can be reused across sections without repeating the id. */
-const SHOT = {
-  tableCourse: "1414235077428-338989a2e8c0",
-  overheadPlates: "1504674900247-0877df9cc836",
-  chefHands: "1551218808-94e220e084d2",
-  fishDark: "1519708227418-c8fd9a32b7a2",
-  chefFlame: "1600565193348-f74bd3c7ccdf",
-  produce: "1466637574441-749b8f19452f",
-  fishPlated: "1467003909585-2f8a72700288",
-  boardMeat: "1544025162-d76694265947",
-  dessert: "1529543544282-ea669407fca3",
-  clams: "1595295333158-4742f28fbd85",
-  moodyDish: "1476224203421-9ac39bcb3327",
-  longTable: "1519225421980-715cb0215aed",
-  sharingPlatter: "1555939594-58d7cb561ad1",
-} as const;
-
-/* ----------------------------- hero ----------------------------------- */
-
-export const HERO: Media = img(
-  SHOT.tableCourse,
-  "portrait",
-  "A plated course set down on a candlelit dining table",
-  1800
-);
+const img = (file: string, aspect: Media["aspect"], alt: string): Media => ({
+  src: `/media/${file}`,
+  kind: "image",
+  aspect,
+  alt,
+});
 
 /* ---------------------------- services --------------------------------- */
+/* One frame per service, in the order the section lists them: the private
+   dinner, the celebration, the residency. Each is the clearest picture of
+   that job rather than the prettiest picture available. */
 
 export const SERVICE_MEDIA: Media[] = [
-  img(SHOT.overheadPlates, "landscape", "An overhead spread of plates on dark wood"),
-  img(SHOT.longTable, "landscape", "A long table laid with flowers and glassware for a celebration"),
-  img(SHOT.chefHands, "landscape", "A chef's hands working through prep"),
+  img(
+    "place-setting.jpg",
+    "portrait",
+    "A place setting of blue and white china with gold cutlery and a yellow napkin, hydrangeas behind"
+  ),
+  img(
+    "long-table-trees.jpg",
+    "landscape",
+    "A long table laid with dishes and hydrangeas under trees, in dappled light"
+  ),
+  img(
+    "plate-over-the-valley.jpg",
+    "portrait",
+    "A plate of bruschetta and tartlets held up beside a pool, terraced hillsides behind"
+  ),
 ];
 
 /* ------------------------- the story gallery --------------------------- */
-/* Mixed ratios on purpose. Reordering this array recomposes the page.
+/* Order is the composition. The story page walks a hand-placed grid of twelve
+   frames and takes each ratio from its slot, so this array is sequenced to put
+   the pictures that survive a wide cut - the overhead tables, the buffets - in
+   the slots that ask for one, and the upright subjects in the tall ones.
+   Reordering recomposes both this and the home page's rail.
+
    Add { kind: "video", src, poster, aspect, alt } entries and the same grid
    plays them inline, muted and looping. */
 
 export const GALLERY: Media[] = [
-  img(SHOT.tableCourse, "portrait", "A plated course at a candlelit table"),
-  img(SHOT.boardMeat, "landscape", "Roasted meat carved onto a wooden board"),
-  img(SHOT.chefHands, "tall", "A chef's hands working through prep"),
-  img(SHOT.longTable, "landscape", "A long table laid with flowers and glassware"),
-  img(SHOT.fishDark, "square", "Seared fish on a dark plate"),
-  img(SHOT.chefFlame, "portrait", "A chef finishing a dish over open flame"),
-  img(SHOT.produce, "landscape", "Produce laid out before service"),
-  img(SHOT.fishPlated, "square", "White fish plated with greens and sauce"),
-  img(SHOT.sharingPlatter, "tall", "A large sharing platter of grilled meat and vegetables"),
-  img(SHOT.dessert, "portrait", "A plated dessert finished at the table"),
-  img(SHOT.clams, "landscape", "Clams and pasta in a shallow bowl"),
-  img(SHOT.moodyDish, "square", "A dark, slow cooked dish"),
+  img(
+    "table-blue-runner.jpg",
+    "portrait",
+    "A long table set with blue and white china and hydrangeas along a blue runner"
+  ),
+  img(
+    "table-spread-overhead.jpg",
+    "landscape",
+    "An overhead spread of tomato salad, terrine and glassware down a blue table runner"
+  ),
+  img(
+    "fried-fish-platter.jpg",
+    "tall",
+    "An oval platter of fried fish with tomatoes and coriander, held over a lawn"
+  ),
+  img(
+    "garden-buffet-tartlets.jpg",
+    "landscape",
+    "A garden buffet on a gingham cloth: flatbread crisps, hydrangeas and cream tartlets"
+  ),
+  img(
+    "tomato-salad.jpg",
+    "square",
+    "Chopped tomato salad dressed with herbs in a green cabbage leaf bowl"
+  ),
+  img(
+    "flatbreads-tray.jpg",
+    "portrait",
+    "A tray of flatbreads with pulled pork and pickled cabbage, held up on a lawn"
+  ),
+  img(
+    "garden-buffet-overhead.jpg",
+    "landscape",
+    "An overhead garden buffet on a gingham cloth, hydrangeas set among the dishes"
+  ),
+  img(
+    "pea-shoot-canapes.jpg",
+    "square",
+    "Canapes piped with saffron cream and pea shoots on a dark tray"
+  ),
+  img(
+    "toasted-sandwiches.jpg",
+    "tall",
+    "A metal platter of toasted sandwiches held over grass"
+  ),
+  img(
+    "raspberry-desserts.jpg",
+    "portrait",
+    "Sponge and raspberry desserts rolled in freeze dried fruit"
+  ),
+  img(
+    "strawberry-coupes.jpg",
+    "landscape",
+    "Strawberry desserts in coupe glasses on a white cloth, in low sun"
+  ),
+  img(
+    "empanadas-box.jpg",
+    "square",
+    "Fried empanadas with herb sauce, lined up in a long wooden box"
+  ),
+];
+
+/**
+ * Everything, for the story page.
+ *
+ * The home page's rail is pinned while it pans, so its length is scroll the
+ * visitor has to spend: twelve frames is the most it can carry before the
+ * section outstays the rest of the page. The story page has no such ceiling -
+ * it is the archive - so it shows these as well, in the half width frames the
+ * grid falls back to past its twelfth slot.
+ */
+export const ARCHIVE: Media[] = [
+  ...GALLERY,
+  img(
+    "chicken-and-peas.jpg",
+    "portrait",
+    "Roast chicken thighs in sauce with peas on a scalloped platter"
+  ),
+  img(
+    "cured-meats-and-cherries.jpg",
+    "square",
+    "Thin sliced cured meats with cherries in a wide bowl"
+  ),
+  img(
+    "beef-rolls-platter.jpg",
+    "portrait",
+    "A platter of rolled beef with cream and onion, held up in a garden"
+  ),
+  img(
+    "meringues-and-pearls.jpg",
+    "portrait",
+    "Meringue shells filled with cream and black pearls, in a wooden box"
+  ),
+  img(
+    "salmon-tartlets.jpg",
+    "square",
+    "Tartlets of smoked salmon and spring onion on a glass plate"
+  ),
+  img(
+    "beef-carpaccio.jpg",
+    "tall",
+    "Plates of thin sliced beef with cherries and toasted crumbs"
+  ),
 ];
 
 export const CHEF_PORTRAIT: Media = img(
-  SHOT.chefFlame,
+  "bowl-and-rosemary.jpg",
   "portrait",
-  "A chef finishing a dish over open flame",
-  1200
+  "A bowl of golden puree finished with herb oil, held against a flowering rosemary hedge"
 );

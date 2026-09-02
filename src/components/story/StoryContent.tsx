@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLang } from "@/lib/lang-context";
-import { CHEF_PORTRAIT } from "@/lib/media";
+import { ARCHIVE, CHEF_PORTRAIT } from "@/lib/media";
 import Reveal, { RevealLines } from "@/components/ui/Reveal";
 import Gallery from "./Gallery";
 import PageHero from "@/components/layout/PageHero";
@@ -73,7 +73,7 @@ export default function StoryContent() {
           </Reveal>
         </div>
 
-        <Gallery />
+        <Gallery items={ARCHIVE} />
       </section>
     </>
   );
