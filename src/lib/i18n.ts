@@ -26,7 +26,7 @@ export type Dict = {
     langLabel: string;
   };
   cta: { book: string; work: string };
-  hero: { line1: string; line2: string; sub: string };
+  hero: { line1: string; line2: string; sub: string; cta: string };
   statement: { lines: string[] };
   services: { label: string; items: ServiceItem[] };
   galleryTeaser: { heading: string; body: string };
@@ -111,6 +111,7 @@ const en: Dict = {
     line1: "We cook",
     line2: "where you live.",
     sub: "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.",
+    cta: "Reserve your next catering",
   },
 
   statement: {
@@ -249,6 +250,7 @@ const pt: Dict = {
     line1: "Cozinhamos",
     line2: "onde vive.",
     sub: "Chef privado e catering para jantares, celebrações e eventos. Menus criados à volta da sua mesa, cozinhados na sua cozinha.",
+    cta: "Reserva o teu catering",
   },
 
   statement: {

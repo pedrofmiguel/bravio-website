@@ -5,13 +5,14 @@ import { useLang } from "@/lib/lang-context";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { Logomark } from "@/components/brand/Marks";
+import { ArrowAnchor } from "@/components/ui/ArrowLink";
 
 /**
  * Hero: the mark at full scale, with the line written across it.
  *
- * No buttons, no photograph, no stack of supporting copy. The mark fills the
- * viewport and bleeds off the top and bottom, and the headline is set straight
- * over the middle of it.
+ * No photograph, no stack of supporting copy. The mark fills the viewport and
+ * bleeds off the top and bottom, and the headline is set straight over the
+ * middle of it.
  *
  * A note on what was tried and rejected: setting the type to
  * `mix-blend-mode: difference` makes it invert as it crosses the mark, which
@@ -24,8 +25,13 @@ import { Logomark } from "@/components/brand/Marks";
  * type reads as a blob with a caption; pushed right and cropped by the edge,
  * with the line set left across its arms, it reads as a composition.
  *
- * No buttons. The mark and the sentence are the whole idea, and booking lives
- * in the nav, the enquiry section and the footer.
+ * The hero carried no button for a while, on the reasoning that the mark and
+ * the sentence were the whole idea and booking already lived in the nav, the
+ * enquiry section and the footer. The client asked for one, which is a fair
+ * call: the enquiry form was four sections down and nothing above the fold
+ * said what to do next. It scrolls to that form rather than routing to
+ * /contact, and is placed and paced to stay subordinate to the headline - it
+ * arrives last, after the line and the standfirst have landed.
  */
 export default function Hero() {
   const { t, lang } = useLang();
@@ -63,6 +69,12 @@ export default function Hero() {
             { autoAlpha: 0, y: 16 },
             { autoAlpha: 1, y: 0, duration: 1.1 },
             "-=0.9"
+          )
+          .fromTo(
+            "[data-cta]",
+            { autoAlpha: 0, y: 14 },
+            { autoAlpha: 1, y: 0, duration: 0.9 },
+            "-=0.75"
           );
 
         // The mark drifts and turns a little as the hero leaves, so the brand
@@ -138,6 +150,17 @@ export default function Hero() {
         >
           {t.hero.sub}
         </p>
+
+        {/* Jumps to the enquiry block at the foot of this page rather than
+            routing to /contact: the form is already here, and a scroll keeps
+            the visitor in one continuous page instead of spending the route
+            transition to reach a form they were four sections away from.
+
+            The hero sits inside .on-fig, so the solid variant picks up creme
+            on fig from the tone tokens without being told. */}
+        <div data-anim data-cta className="invisible mt-9 sm:mt-10">
+          <ArrowAnchor targetId="enquiry">{t.hero.cta}</ArrowAnchor>
+        </div>
       </div>
 
       <div id="hero-sentinel" aria-hidden="true" className="absolute bottom-0 h-px w-full" />

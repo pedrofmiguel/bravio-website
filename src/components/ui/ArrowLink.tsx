@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import TransitionLink from "@/components/layout/TransitionLink";
+import { getLenis } from "@/lib/lenis-store";
+import { prefersReducedMotion } from "@/lib/gsap";
 
 /**
  * The site's only button shape.
@@ -68,6 +70,78 @@ export function ArrowLink({
     >
       <Inner variant={variant}>{children}</Inner>
     </TransitionLink>
+  );
+}
+
+/**
+ * Same button, pointed at a section of the current page instead of a route.
+ *
+ * It stays a real anchor with a real href, so it works before hydration, right
+ * clicks, and reads to a screen reader as the in-page link it is. Only a plain
+ * left click is intercepted, and only to hand the scroll to Lenis - a native
+ * jump would skip the interpolation the whole site is tuned around and leave
+ * Lenis's internal position out of step with the document's.
+ *
+ * The URL is deliberately not given the hash. Landing on the page with one
+ * makes the browser jump before Lenis and ScrollTrigger have set up, which
+ * fights the preloader and leaves every pinned section measured from the wrong
+ * place.
+ */
+export function ArrowAnchor({
+  targetId,
+  children,
+  variant = "solid",
+  className,
+}: {
+  /** id of the element to scroll to, without the #. */
+  targetId: string;
+  children: ReactNode;
+  variant?: Variant;
+  className?: string;
+}) {
+  return (
+    <a
+      href={`#${targetId}`}
+      onClick={(event) => {
+        // Anything but a plain left click stays the browser's business.
+        if (
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey ||
+          event.button !== 0
+        ) {
+          return;
+        }
+
+        const target = document.getElementById(targetId);
+        // No target means the section is not on this page. Let the browser try.
+        if (!target) return;
+
+        event.preventDefault();
+
+        const lenis = getLenis();
+        if (lenis) {
+          lenis.scrollTo(target);
+        } else {
+          // Lenis is never created under reduced motion, so this is also the
+          // reduced-motion path: no smoothing, just go there.
+          target.scrollIntoView({
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
+            block: "start",
+          });
+        }
+
+        // Carry the keyboard along with the viewport, or the next Tab would
+        // continue from the hero and walk back down the whole page. focus-visible
+        // means a mouse click still shows no ring.
+        target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+      }}
+      className={`${BASE} ${VARIANTS[variant]} ${className ?? ""}`}
+    >
+      <Inner variant={variant}>{children}</Inner>
+    </a>
   );
 }
 
