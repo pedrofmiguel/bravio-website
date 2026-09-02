@@ -1,13 +1,12 @@
-import type { Metadata } from "next";
-import NotFoundContent from "@/components/layout/NotFoundContent";
+import { redirect } from "next/navigation";
 
-/** Nothing here is worth a search result, and a 404 that gets indexed is a
- *  404 that shows up in someone's search for the brand. */
-export const metadata: Metadata = {
-  title: "Page not found",
-  robots: { index: false, follow: true },
-};
-
+/**
+ * Backstop for an explicit `notFound()` call inside a segment.
+ *
+ * Unmatched URLs never reach this file - the root catch-all in `[...slug]`
+ * takes them first and issues a clean 307 - but anything that does land here
+ * should follow the same rule and go home rather than sit on a dead end.
+ */
 export default function NotFound() {
-  return <NotFoundContent />;
+  redirect("/");
 }
