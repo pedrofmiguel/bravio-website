@@ -106,7 +106,7 @@ function clientIp(request: Request): string {
  *
  * The Origin is compared against the host the request actually arrived on,
  * rather than a list of known domains. That is what makes it self
- * configuring: it holds on bravio.pt, on www, on every preview deployment and
+ * configuring: it holds on wearebravio.pt, on www, on every preview deployment and
  * on localhost, with nothing to keep in sync. A hardcoded list is one domain
  * change away from rejecting every real enquiry.
  *

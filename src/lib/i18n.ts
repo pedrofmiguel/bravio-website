@@ -13,7 +13,7 @@ export const LANGS = ["en", "pt"] as const;
 export type Lang = (typeof LANGS)[number];
 export const DEFAULT_LANG: Lang = "en";
 
-export type ServiceItem = { title: string; body: string; meta: string };
+export type ServiceItem = { title: string; body: string; meta?: string };
 
 export type Dict = {
   meta: { title: string; description: string };
@@ -89,7 +89,7 @@ const en: Dict = {
   meta: {
     title: "bravio | Private chef and catering",
     description:
-      "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.",
+      "Private chef and catering for weddings, celebrations and events. Menus built around your table, cooked in your kitchen.",
   },
 
   nav: {
@@ -108,18 +108,17 @@ const en: Dict = {
   },
 
   hero: {
-    line1: "We cook",
-    line2: "where you live.",
-    sub: "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.",
-    cta: "Reserve your next catering",
+    line1: "No fixed address.",
+    line2: "Cooking without limits.",
+    sub: "Private chef for celebrations and events. Menus built around your table, cooked in your kitchen.",
+    cta: "Reserve your date",
   },
 
   statement: {
     lines: [
-      "A dinner starts long before the night itself.",
-      "We learn the room, the people, the reason.",
-      "Then we cook something that only makes",
-      "sense at your table.",
+      "An experience begins long before you reach the table.",
+      "We learn the room, the people, the reason. Then we cook something that only",
+      "makes sense at your table.",
     ],
   },
 
@@ -129,17 +128,16 @@ const en: Dict = {
     items: [
       {
         title: "Private dinner",
-        body: "One table, one evening. We arrive with everything, cook in your kitchen, serve each course and leave it cleaner than we found it.",
+        body: "One table, one evening. We arrive with everything, cook in your kitchen, serve each course and take care of every last detail.",
         meta: "2 to 14 guests",
       },
       {
         title: "Celebration catering",
-        body: "Baptisms, birthdays, weddings at home. Full service from the first delivery to the last plate cleared, with a team we have worked with for years.",
-        meta: "up to 120 guests",
+        body: "Weddings, baptisms, birthdays and other special occasions. We handle everything, from the first delivery to the last plate, with a team dedicated to every detail of the celebration.",
       },
       {
         title: "Chef in residence",
-        body: "A chef with you for a weekend or a season. Villas, boats and second homes, cooking every meal or only the ones that matter.",
+        body: "A chef with you for a weekend, a week or a season. In your home, on your boat or wherever you choose to be. Every meal, or only the ones worth remembering.",
         meta: "by arrangement",
       },
     ],
@@ -153,7 +151,7 @@ const en: Dict = {
 
   contact: {
     label: "Enquiries",
-    heading: "Tell us about the night.",
+    heading: "Tell us about the celebration.",
     body: "Send us the date, the number of people and anything that matters. We answer every enquiry personally, usually within a day.",
     form: {
       name: "Name",
@@ -186,7 +184,7 @@ const en: Dict = {
         name: "Please tell us your name.",
         email: "Please add an email so we can reply.",
         emailInvalid: "That email address does not look right.",
-        message: "Please tell us a little about the night.",
+        message: "Please tell us a little about the celebration.",
       },
     },
   },
@@ -195,7 +193,7 @@ const en: Dict = {
     heroLine1: "Cooking is",
     heroLine2: "the easy part.",
     intro:
-      "bravio is a private chef and catering kitchen working out of Lisbon. We cook in other people's homes, which makes the food only half the job. The other half is reading a room and disappearing into it.",
+      "bravio is a private chef and events kitchen based in Porto. We bring the kitchen to where things happen. Because the food is only half the job. The other half is reading a room, knowing who is at the table, knowing when to fill the space and when to disappear into it.",
     chefHeading: "In the kitchen",
     chefBody:
       "Years in restaurant kitchens taught us how to cook. Cooking in houses taught us the rest: how to work quietly around a party, how to time a course to a conversation, how to leave a kitchen the way we found it.",
@@ -213,7 +211,7 @@ const en: Dict = {
 
   footer: {
     tagline: "Private chef and catering",
-    based: "Lisbon, Portugal",
+    based: "Porto, Portugal",
     rights: "All rights reserved.",
     credits: "Site by",
   },
@@ -229,7 +227,7 @@ const pt: Dict = {
   meta: {
     title: "bravio | Chef privado e catering",
     description:
-      "Chef privado e catering para jantares, celebrações e eventos. Menus criados à volta da sua mesa, cozinhados na sua cozinha.",
+      "Chef privado e catering para casamentos, celebrações e eventos. Menus criados à volta da sua mesa, cozinhados na sua cozinha.",
   },
 
   nav: {
@@ -247,17 +245,16 @@ const pt: Dict = {
   },
 
   hero: {
-    line1: "Cozinhamos",
-    line2: "onde vive.",
-    sub: "Chef privado e catering para jantares, celebrações e eventos. Menus criados à volta da sua mesa, cozinhados na sua cozinha.",
-    cta: "Reserva o teu catering",
+    line1: "Sem morada.",
+    line2: "Cozinha sem limites.",
+    sub: "Chef privado para celebrações e eventos. Menus criados à volta da sua mesa, cozinhados na sua cozinha.",
+    cta: "Reserve a sua data",
   },
 
   statement: {
     lines: [
-      "Um jantar começa muito antes da própria noite.",
-      "Conhecemos a sala, as pessoas, o motivo.",
-      "Depois cozinhamos algo que só faz",
+      "Uma experiência começa muito antes de chegar à mesa.",
+      "Conhecemos a sala, as pessoas, o motivo. Depois, cozinhamos algo que só faz",
       "sentido à sua mesa.",
     ],
   },
@@ -268,17 +265,16 @@ const pt: Dict = {
     items: [
       {
         title: "Jantar privado",
-        body: "Uma mesa, uma noite. Chegamos com tudo, cozinhamos na sua cozinha, servimos cada prato e deixamos tudo mais limpo do que encontrámos.",
+        body: "Uma mesa, uma noite. Chegamos com tudo, cozinhamos na sua cozinha, servimos cada prato e cuidamos de tudo até ao último detalhe.",
         meta: "2 a 14 pessoas",
       },
       {
         title: "Catering de celebração",
-        body: "Batizados, aniversários, casamentos em casa. Serviço completo da primeira entrega ao último prato levantado, com uma equipa que trabalha connosco há anos.",
-        meta: "até 120 pessoas",
+        body: "Casamentos, batizados, aniversários e outras ocasiões especiais. Tratamos de tudo, da primeira entrega ao último prato, com uma equipa dedicada a cada detalhe da celebração.",
       },
       {
         title: "Chef em residência",
-        body: "Um chef consigo durante um fim de semana ou uma estação. Casas de férias, barcos e segundas casas, cozinhando todas as refeições ou apenas as que contam.",
+        body: "Um chef consigo durante um fim de semana, uma semana ou uma estação. Na sua casa, no seu barco ou onde escolher estar. Todas as refeições, ou apenas aquelas que merecem ser lembradas.",
         meta: "sob consulta",
       },
     ],
@@ -292,7 +288,7 @@ const pt: Dict = {
 
   contact: {
     label: "Pedidos",
-    heading: "Conte-nos sobre a noite.",
+    heading: "Conte-nos sobre a celebração.",
     body: "Envie a data, o número de pessoas e tudo o que for importante. Respondemos pessoalmente a todos os pedidos, normalmente dentro de um dia.",
     form: {
       name: "Nome",
@@ -325,7 +321,7 @@ const pt: Dict = {
         name: "Diga-nos o seu nome.",
         email: "Indique um email para lhe respondermos.",
         emailInvalid: "Esse email não parece estar correto.",
-        message: "Conte-nos um pouco sobre a noite.",
+        message: "Conte-nos um pouco sobre a celebração.",
       },
     },
   },
@@ -334,7 +330,7 @@ const pt: Dict = {
     heroLine1: "Cozinhar é",
     heroLine2: "a parte fácil.",
     intro:
-      "A bravio é uma cozinha de chef privado e catering sediada em Lisboa. Cozinhamos em casa dos outros, o que faz da comida apenas metade do trabalho. A outra metade é ler uma sala e desaparecer dentro dela.",
+      "O bravio é uma cozinha de chef privado e eventos, sediada no Porto. Levamos a cozinha até onde as coisas acontecem. Porque a comida é apenas metade do trabalho. A outra metade é ler uma sala, perceber quem está à mesa, saber quando ocupar o espaço e quando desaparecer dentro dele.",
     chefHeading: "Na cozinha",
     chefBody:
       "Anos em cozinhas de restaurante ensinaram-nos a cozinhar. Cozinhar em casas ensinou-nos o resto: trabalhar em silêncio à volta de uma festa, acertar o tempo de um prato ao tempo de uma conversa, deixar a cozinha como a encontrámos.",
@@ -352,7 +348,7 @@ const pt: Dict = {
 
   footer: {
     tagline: "Chef privado e catering",
-    based: "Lisboa, Portugal",
+    based: "Porto, Portugal",
     rights: "Todos os direitos reservados.",
     credits: "Site por",
   },
@@ -367,13 +363,14 @@ const pt: Dict = {
 export const DICT: Record<Lang, Dict> = { en, pt };
 
 /**
- * Contact details. These are placeholders: swap them for the real inbox and
- * number before launch. The contact form posts to /api/contact, which reads
+ * Contact details. The email and phone are live. The phone is spaced for
+ * display; the tel: links strip the spaces at the call site, so keep the
+ * format readable here. The contact form posts to /api/contact, which reads
  * the destination from the CONTACT_TO environment variable.
  */
 export const CONTACT_DETAILS = {
-  email: "hello@bravio.pt",
-  phone: "+351 912 000 000",
+  email: "hello@wearebravio.pt",
+  phone: "+351 939 474 126",
   instagram: "@weare.bravio",
   instagramUrl: "https://instagram.com/weare.bravio",
 };

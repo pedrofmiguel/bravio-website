@@ -129,7 +129,7 @@ export default function Hero() {
       </div>
 
       <div className="relative mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-12">
-        <h1 className="font-display type-hero max-w-[11ch] text-creme">
+        <h1 className="font-display type-hero max-w-[24ch] text-[clamp(1.85rem,5.9vw,6.5rem)] text-creme">
           <span className="line-mask">
             <span data-anim data-line className="invisible block">
               {t.hero.line1}

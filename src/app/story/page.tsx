@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata = pageMetadata({
   title: "Story",
   description:
-    "A private chef and catering kitchen working out of Lisbon. Selected evenings from the archive.",
+    "A private chef and events kitchen based in Porto. Selected evenings from the archive.",
   path: "/story",
   type: "article",
 });

@@ -16,7 +16,7 @@ import { CONTACT_DETAILS } from "./i18n";
  */
 
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bravio.pt"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://wearebravio.pt"
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "bravio";
@@ -25,10 +25,10 @@ export const SITE_NAME = "bravio";
 export const SITE_TITLE = "bravio | Private chef and catering";
 
 export const SITE_DESCRIPTION =
-  "Private chef and catering for dinners, celebrations and events. Menus built around your table, cooked in your kitchen.";
+  "Private chef and catering for weddings, celebrations and events. Menus built around your table, cooked in your kitchen.";
 
 /** Where the kitchen works. Matches t.footer.based. */
-export const LOCALITY = "Lisbon";
+export const LOCALITY = "Porto";
 export const COUNTRY = "PT";
 
 /**

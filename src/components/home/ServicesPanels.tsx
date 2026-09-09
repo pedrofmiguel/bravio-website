@@ -76,7 +76,7 @@ export default function ServicesPanels() {
                     {item.body}
                   </p>
 
-                  <p className="type-label mt-5 text-creme/55">{item.meta}</p>
+                  {item.meta && <p className="type-label mt-5 text-creme/55">{item.meta}</p>}
                 </div>
               </div>
             </article>

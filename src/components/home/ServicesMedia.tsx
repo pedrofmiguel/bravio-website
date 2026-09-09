@@ -95,7 +95,7 @@ export default function ServicesMedia() {
                   <p className="mt-5 max-w-[42ch] text-[1rem] leading-relaxed text-creme/75">
                     {item.body}
                   </p>
-                  <p className="type-label mt-7 text-creme/55">{item.meta}</p>
+                  {item.meta && <p className="type-label mt-7 text-creme/55">{item.meta}</p>}
                 </div>
               </div>
             </div>

@@ -105,7 +105,7 @@ export default function Services() {
                     </p>
                   </div>
 
-                  <p className="type-label text-ink-muted">{item.meta}</p>
+                  {item.meta && <p className="type-label text-ink-muted">{item.meta}</p>}
                 </div>
               </div>
             </div>
