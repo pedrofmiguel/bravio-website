@@ -184,20 +184,13 @@ export const ARCHIVE: Media[] = [
 ];
 
 /**
- * The story page's opening photograph, and the first frame with the team in it.
+ * The team, for the story page's "in the kitchen" block.
  *
- * Upright, with a tree trunk cropping each side, so it is drawn whole in a tall
- * frame beside the headline. Cover-cropping it into a wide band would take the
- * heads off.
+ * Upright, with a tree trunk cropping each side, so it is drawn whole in a 2:3
+ * frame. A 4:5 crop takes the shoes off.
  */
-export const STORY_HERO: Media = img(
+export const CHEF_PORTRAIT: Media = img(
   "chefs-between-trees.jpg",
   "tall",
-  "The two bravio chefs in burgundy aprons, standing in a garden between two tree trunks"
-);
-
-export const CHEF_PORTRAIT: Media = img(
-  "bowl-and-rosemary.jpg",
-  "portrait",
-  "A bowl of golden puree finished with herb oil, held against a flowering rosemary hedge"
+  "Rafa and João, the bravio chefs, in burgundy aprons in a garden between two tree trunks"
 );

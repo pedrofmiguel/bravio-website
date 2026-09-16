@@ -193,7 +193,7 @@ const en: Dict = {
     heroLine1: "Cooking is",
     heroLine2: "the easy part.",
     intro:
-      "bravio is a private chef and events kitchen based in Porto. We bring the kitchen to where things happen. Because the food is only half the job. The other half is reading a room, knowing who is at the table, knowing when to fill the space and when to disappear into it.",
+      "bravio is a private chef and events kitchen based in Porto - founded by Rafa and João. We bring the kitchen to where things happen. Because the food is only half the job. The other half is reading a room, knowing who is at the table, knowing when to fill the space and when to disappear into it.",
     chefHeading: "In the kitchen",
     chefBody:
       "Years in restaurant kitchens taught us how to cook. Cooking in houses taught us the rest: how to work quietly around a party, how to time a course to a conversation, how to leave a kitchen the way we found it.",
@@ -330,7 +330,7 @@ const pt: Dict = {
     heroLine1: "Cozinhar é",
     heroLine2: "a parte fácil.",
     intro:
-      "O bravio é uma cozinha de chef privado e eventos, sediada no Porto. Levamos a cozinha até onde as coisas acontecem. Porque a comida é apenas metade do trabalho. A outra metade é ler uma sala, perceber quem está à mesa, saber quando ocupar o espaço e quando desaparecer dentro dele.",
+      "O bravio é uma cozinha de chef privado e eventos, sediada no Porto - fundada pelo Rafa e pelo João. Levamos a cozinha até onde as coisas acontecem. Porque a comida é apenas metade do trabalho. A outra metade é ler uma sala, perceber quem está à mesa, saber quando ocupar o espaço e quando desaparecer dentro dele.",
     chefHeading: "Na cozinha",
     chefBody:
       "Anos em cozinhas de restaurante ensinaram-nos a cozinhar. Cozinhar em casas ensinou-nos o resto: trabalhar em silêncio à volta de uma festa, acertar o tempo de um prato ao tempo de uma conversa, deixar a cozinha como a encontrámos.",

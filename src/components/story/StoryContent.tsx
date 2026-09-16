@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLang } from "@/lib/lang-context";
-import { ARCHIVE, CHEF_PORTRAIT, STORY_HERO } from "@/lib/media";
+import { ARCHIVE, CHEF_PORTRAIT } from "@/lib/media";
 import Reveal, { RevealLines } from "@/components/ui/Reveal";
 import ScrollLit from "@/components/ui/ScrollLit";
 import Gallery from "./Gallery";
@@ -20,11 +20,7 @@ export default function StoryContent() {
 
   return (
     <>
-      <PageHero
-        line1={t.story.heroLine1}
-        line2={t.story.heroLine2}
-        media={STORY_HERO}
-      />
+      <PageHero line1={t.story.heroLine1} line2={t.story.heroLine2} />
 
       <section className="mx-auto max-w-[1500px] px-5 py-28 sm:px-8 sm:py-36 lg:px-12">
         <ScrollLit
@@ -38,7 +34,7 @@ export default function StoryContent() {
         <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
             <Reveal distance={40}>
-              <div className="relative aspect-4/5 w-full overflow-hidden">
+              <div className="relative aspect-2/3 w-full overflow-hidden">
                 <Image
                   src={CHEF_PORTRAIT.src}
                   alt={CHEF_PORTRAIT.alt}
