@@ -330,7 +330,7 @@ const pt: Dict = {
     heroLine1: "Cozinhar é",
     heroLine2: "a parte fácil.",
     intro:
-      "O bravio é uma cozinha de chef privado e eventos, sediada no Porto - fundada pelo Rafa e pelo João. Levamos a cozinha até onde as coisas acontecem. Porque a comida é apenas metade do trabalho. A outra metade é ler uma sala, perceber quem está à mesa, saber quando ocupar o espaço e quando desaparecer dentro dele.",
+      "O bravio é uma cozinha de chef privado e eventos, sediada no Porto - fundada pelo João e pelo Rafael. Levamos a cozinha até onde as coisas acontecem. Porque a comida é apenas metade do trabalho. A outra metade é ler uma sala, perceber quem está à mesa, saber quando ocupar o espaço e quando desaparecer dentro dele.",
     chefHeading: "Na cozinha",
     chefBody:
       "Anos em cozinhas de restaurante ensinaram-nos a cozinhar. Cozinhar em casas ensinou-nos o resto: trabalhar em silêncio à volta de uma festa, acertar o tempo de um prato ao tempo de uma conversa, deixar a cozinha como a encontrámos.",

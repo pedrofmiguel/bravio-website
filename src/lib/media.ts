@@ -192,5 +192,5 @@ export const ARCHIVE: Media[] = [
 export const CHEF_PORTRAIT: Media = img(
   "chefs-between-trees.jpg",
   "tall",
-  "Rafa and João, the bravio chefs, in burgundy aprons in a garden between two tree trunks"
+  "João and Rafael, the bravio chefs, in burgundy aprons in a garden between two tree trunks"
 );
