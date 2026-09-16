@@ -85,10 +85,9 @@ export const metadata: Metadata = {
   // The phone number in the footer is a real link already; this stops iOS
   // from finding numbers in body copy and turning them blue on its own.
   formatDetection: { telephone: false, address: false, email: false },
-  icons: {
-    icon: "/brand/logomark.svg",
-    apple: "/brand/logomark.svg",
-  },
+  // Icons come from favicon.ico, icon.png and apple-icon.png in this folder,
+  // built by scripts/make-icons.mjs. Declaring them here as well would put a
+  // second, competing set of <link> tags in the head.
 };
 
 /**
