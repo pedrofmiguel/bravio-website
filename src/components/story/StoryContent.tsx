@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { useLang } from "@/lib/lang-context";
-import { ARCHIVE, CHEF_PORTRAIT } from "@/lib/media";
+import { ARCHIVE, CHEF_PORTRAIT, STORY_HERO } from "@/lib/media";
 import Reveal, { RevealLines } from "@/components/ui/Reveal";
+import ScrollLit from "@/components/ui/ScrollLit";
 import Gallery from "./Gallery";
 import PageHero from "@/components/layout/PageHero";
 
@@ -19,14 +20,18 @@ export default function StoryContent() {
 
   return (
     <>
-      <PageHero line1={t.story.heroLine1} line2={t.story.heroLine2} />
+      <PageHero
+        line1={t.story.heroLine1}
+        line2={t.story.heroLine2}
+        media={STORY_HERO}
+      />
 
       <section className="mx-auto max-w-[1500px] px-5 py-28 sm:px-8 sm:py-36 lg:px-12">
-        <Reveal>
-          <p className="type-display font-display max-w-[24ch] text-balance">
-            {t.story.intro}
-          </p>
-        </Reveal>
+        <ScrollLit
+          lines={[t.story.intro]}
+          resetKey={lang}
+          className="type-display font-display max-w-[24ch] text-balance"
+        />
       </section>
 
       <section className="mx-auto max-w-[1500px] px-5 pb-28 sm:px-8 sm:pb-36 lg:px-12">

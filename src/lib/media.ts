@@ -183,6 +183,19 @@ export const ARCHIVE: Media[] = [
   ),
 ];
 
+/**
+ * The story page's opening photograph, and the first frame with the team in it.
+ *
+ * Upright, with a tree trunk cropping each side, so it is drawn whole in a tall
+ * frame beside the headline. Cover-cropping it into a wide band would take the
+ * heads off.
+ */
+export const STORY_HERO: Media = img(
+  "chefs-between-trees.jpg",
+  "tall",
+  "The two bravio chefs in burgundy aprons, standing in a garden between two tree trunks"
+);
+
 export const CHEF_PORTRAIT: Media = img(
   "bowl-and-rosemary.jpg",
   "portrait",

@@ -57,6 +57,7 @@ const MANIFEST = {
   "IMG_4285.jpeg": "meringues-and-pearls.jpg",
   "IMG_4291.jpeg": "salmon-tartlets.jpg",
   "97205649-fe66-4227-9427-2feca5f2914d.jpg": "beef-carpaccio.jpg",
+  "foto site.jpg": "chefs-between-trees.jpg",
 };
 
 const src = process.argv[2];
