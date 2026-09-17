@@ -8,6 +8,20 @@ const nextConfig: NextConfig = {
     // proxied through this site's optimiser.
     formats: ["image/avif", "image/webp"],
   },
+  /**
+   * The client reaches their mailbox by typing wearebravio.pt/webmail, a habit
+   * from the old cPanel host. The mailbox itself lives on webmail.wearebravio.pt,
+   * so send them there before the catch-all route can bounce them home.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/webmail/:path*",
+        destination: "https://webmail.wearebravio.pt/:path*",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 /**

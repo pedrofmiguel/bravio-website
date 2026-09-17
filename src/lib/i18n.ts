@@ -129,7 +129,6 @@ const en: Dict = {
       {
         title: "Private dinner",
         body: "One table, one evening. We arrive with everything, cook in your kitchen, serve each course and take care of every last detail.",
-        meta: "2 to 14 guests",
       },
       {
         title: "Celebration catering",
@@ -193,7 +192,7 @@ const en: Dict = {
     heroLine1: "Cooking is",
     heroLine2: "the easy part.",
     intro:
-      "bravio is a private chef and events kitchen based in Porto - founded by Rafa and João. We bring the kitchen to where things happen. Because the food is only half the job. The other half is reading a room, knowing who is at the table, knowing when to fill the space and when to disappear into it.",
+      "bravio is a private chef and events kitchen based in Porto - founded by João and Rafael. We bring the kitchen to where things happen. Because the food is only half the job. The other half is reading a room, knowing who is at the table, knowing when to fill the space and when to disappear into it.",
     chefHeading: "In the kitchen",
     chefBody:
       "Years in restaurant kitchens taught us how to cook. Cooking in houses taught us the rest: how to work quietly around a party, how to time a course to a conversation, how to leave a kitchen the way we found it.",
@@ -266,7 +265,6 @@ const pt: Dict = {
       {
         title: "Jantar privado",
         body: "Uma mesa, uma noite. Chegamos com tudo, cozinhamos na sua cozinha, servimos cada prato e cuidamos de tudo até ao último detalhe.",
-        meta: "2 a 14 pessoas",
       },
       {
         title: "Catering de celebração",
