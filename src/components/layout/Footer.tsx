@@ -83,7 +83,18 @@ export default function Footer() {
           <p>
             &copy; {year} bravio. {t.footer.rights}
           </p>
-          <p>{t.footer.based}</p>
+          <div className="flex items-center gap-3">
+            <p>{t.footer.based}</p>
+            <span aria-hidden="true">&middot;</span>
+            <a
+              href="https://ferreirah.tech"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-creme"
+            >
+              made by ferreira.
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -82,6 +82,13 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
+  // Search Console ownership. Read from the environment so verifying the
+  // property is a dashboard change rather than a deploy, and so the tag is
+  // absent entirely when the variable is unset - an empty content attribute
+  // reads as a failed verification rather than none.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   // The phone number in the footer is a real link already; this stops iOS
   // from finding numbers in body copy and turning them blue on its own.
   formatDetection: { telephone: false, address: false, email: false },

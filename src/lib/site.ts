@@ -15,8 +15,19 @@ import { CONTACT_DETAILS } from "./i18n";
  * production is worse than an absent field.
  */
 
+/**
+ * www, not the apex. The apex answers every request with a 308 to
+ * www.wearebravio.pt, so pointing the canonical tag, the sitemap and the
+ * structured data at the apex handed Google three URLs that all redirect -
+ * a canonical that is itself a redirect is a contradiction, and it is the
+ * reason the site was not being indexed.
+ *
+ * The rule is that this constant names the host actually served. If the apex
+ * is ever made primary in Vercel (Domains -> set wearebravio.pt as the
+ * redirect target instead), drop the www here in the same change.
+ */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://wearebravio.pt"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.wearebravio.pt"
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "bravio";
