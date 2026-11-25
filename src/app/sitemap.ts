@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { ROUTES, absolute } from "@/lib/site";
 
 /**
- * Sitemap for the three real routes.
+ * Sitemap for the real routes, as listed in ROUTES.
  *
  * Both languages live at the same URL - the preference is client side, not a
  * path segment - so there is one entry per route and no hreflang alternates.

@@ -18,6 +18,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Grain from "@/components/layout/Grain";
 import SkipLink from "@/components/layout/SkipLink";
+import CookieBanner from "@/components/consent/CookieBanner";
+import Analytics from "@/components/consent/Analytics";
 
 /**
  * Outfit stands in for Gottora, the display face in the brand guidelines.
@@ -153,11 +155,16 @@ export default function RootLayout({
           <Preloader />
           <SkipLink />
           <PageTransition>
+            {/* First in the tab order after the skip link, so a keyboard
+                visitor meets the question before the page rather than after
+                the footer. It sits fixed, so the position is only DOM order. */}
+            <CookieBanner />
             <Header />
             <main id="content">{children}</main>
             <Footer />
           </PageTransition>
           <Grain />
+          <Analytics />
         </LangProvider>
       </body>
     </html>

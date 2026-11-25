@@ -121,6 +121,40 @@ export function ArrowButton({
   );
 }
 
+/**
+ * The same pill without the arrow, for a pair of choices that must weigh the
+ * same - the cookie banner's accept and decline. The law asks that refusing be
+ * as easy as agreeing, and an arrow on one of them would mark it as the way
+ * forward.
+ */
+export function PillButton({
+  children,
+  variant = "outline",
+  className,
+  ...rest
+}: {
+  children: ReactNode;
+  variant?: Variant;
+  className?: string;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      className={`${BASE} ${VARIANTS[variant]} ${className ?? ""}`}
+      {...rest}
+    >
+      <span
+        className={
+          variant === "outline"
+            ? "relative transition-colors duration-300 group-hover:text-ground"
+            : "relative"
+        }
+      >
+        {children}
+      </span>
+    </button>
+  );
+}
+
 /** Quieter text link with a rule that draws in on hover. */
 export function UnderlineLink({
   href,

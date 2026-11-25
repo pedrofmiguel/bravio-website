@@ -82,6 +82,20 @@ export type Dict = {
     rights: string;
     credits: string;
   };
+  /** Footer links and the cookie banner. The policy text itself is long
+   *  enough to live in its own module, lib/cookie-policy.ts. */
+  legal: {
+    cookiePolicy: string;
+    cookieSettings: string;
+    banner: {
+      label: string;
+      body: string;
+      accept: string;
+      decline: string;
+      currentOn: string;
+      currentOff: string;
+    };
+  };
   a11y: { skip: string; home: string; loading: string };
 };
 
@@ -213,6 +227,19 @@ const en: Dict = {
     based: "Porto, Portugal",
     rights: "All rights reserved.",
     credits: "Site by",
+  },
+
+  legal: {
+    cookiePolicy: "Cookie policy",
+    cookieSettings: "Cookie settings",
+    banner: {
+      label: "Cookies",
+      body: "We would like to use Google Analytics to understand how the site is used. It stays off unless you accept, and the site works the same either way.",
+      accept: "Accept",
+      decline: "Decline",
+      currentOn: "Google Analytics is currently on.",
+      currentOff: "Google Analytics is currently off.",
+    },
   },
 
   a11y: {
@@ -349,6 +376,19 @@ const pt: Dict = {
     based: "Porto, Portugal",
     rights: "Todos os direitos reservados.",
     credits: "Site por",
+  },
+
+  legal: {
+    cookiePolicy: "Política de cookies",
+    cookieSettings: "Definições de cookies",
+    banner: {
+      label: "Cookies",
+      body: "Gostaríamos de usar o Google Analytics para perceber como o site é utilizado. Fica desligado a menos que aceite, e o site funciona da mesma forma em qualquer caso.",
+      accept: "Aceitar",
+      decline: "Recusar",
+      currentOn: "O Google Analytics está ativo neste momento.",
+      currentOff: "O Google Analytics está desativado neste momento.",
+    },
   },
 
   a11y: {

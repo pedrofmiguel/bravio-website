@@ -14,9 +14,13 @@ import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 export default function PageHero({
   line1,
   line2,
+  eyebrow,
 }: {
   line1: string;
   line2: string;
+  /** Small label above the headline, for a page whose headline is a phrase
+   *  rather than its name - the cookie policy says what it is up front. */
+  eyebrow?: string;
 }) {
   const rootRef = useRef<HTMLElement>(null);
 
@@ -48,7 +52,7 @@ export default function PageHero({
     }, root);
 
     return () => ctx.revert();
-  }, [line1, line2]);
+  }, [line1, line2, eyebrow]);
 
   return (
     <section
@@ -56,6 +60,16 @@ export default function PageHero({
       className="on-fig relative flex min-h-[62vh] items-end bg-ground text-ink sm:min-h-[70vh]"
     >
       <div className="mx-auto w-full max-w-[1500px] px-5 pb-16 pt-32 sm:px-8 sm:pb-20 lg:px-12 lg:pb-24">
+        {eyebrow ? (
+          // Rides the same masked rise as the headline, as its first line.
+          <p className="type-label mb-6 text-ink-muted sm:mb-8">
+            <span className="line-mask">
+              <span data-anim data-page-line className="block">
+                {eyebrow}
+              </span>
+            </span>
+          </p>
+        ) : null}
         <h1 className="font-display type-hero">
           <span className="line-mask">
             <span data-anim data-page-line className="block">

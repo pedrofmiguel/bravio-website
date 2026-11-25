@@ -5,6 +5,7 @@ import { Logomark, Wordmark } from "@/components/brand/Marks";
 import TransitionLink from "./TransitionLink";
 import { useLang } from "@/lib/lang-context";
 import { CONTACT_DETAILS } from "@/lib/i18n";
+import { HAS_OPTIONAL_TRACKING, openPreferences } from "@/lib/consent";
 
 /**
  * Closing bookend. Fig ground, mirroring the hero, so each page opens and
@@ -80,9 +81,30 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col gap-2 border-t border-creme/12 pt-6 text-[0.8rem] text-creme/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            &copy; {year} bravio. {t.footer.rights}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <p>
+              &copy; {year} bravio. {t.footer.rights}
+            </p>
+            <span aria-hidden="true">&middot;</span>
+            <TransitionLink href="/cookies" className="transition-colors hover:text-creme">
+              {t.legal.cookiePolicy}
+            </TransitionLink>
+            {/* Withdrawing consent has to be as easy as giving it, so the way
+                back to the banner is on every page. Only when there is a
+                banner to go back to. */}
+            {HAS_OPTIONAL_TRACKING ? (
+              <>
+                <span aria-hidden="true">&middot;</span>
+                <button
+                  type="button"
+                  onClick={openPreferences}
+                  className="transition-colors hover:text-creme"
+                >
+                  {t.legal.cookieSettings}
+                </button>
+              </>
+            ) : null}
+          </div>
           <div className="flex items-center gap-3">
             <p>{t.footer.based}</p>
             <span aria-hidden="true">&middot;</span>
